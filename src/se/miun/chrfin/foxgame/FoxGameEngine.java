@@ -3,12 +3,15 @@ package se.miun.chrfin.foxgame;
 import java.util.ArrayList;
 
 import se.miun.chrfin.foxgame.com.GameStatus;
+import se.miun.chrfin.foxgame.logic.Position;
 import se.miun.chrfin.foxgame.setup.PlayerSetup;
 
 /**
  * @author Christoffer Fink
  */
 public class FoxGameEngine implements AiGameEngine {
+	
+	// TODO: See if there are faster variables/collections to use.
 
 	// TODO: Better name?
 	/**
@@ -20,8 +23,16 @@ public class FoxGameEngine implements AiGameEngine {
 	 * Holds a String representing the players role
 	 */
 	private final String playerRole;
-
-	private ArrayList<ArrayList<Integer>> gameBoard = new ArrayList<ArrayList<Integer>>();
+	
+	/**
+	 * Holds the positions of the foxes
+	 */
+	private ArrayList<Position> foxPositions = new ArrayList<Position>();
+	
+	/**
+	 * Holds the positions of the sheep
+	 */
+	private ArrayList<Position> sheepPositions = new ArrayList<Position>();
 
 	/**
 	 * Constructor
@@ -33,23 +44,20 @@ public class FoxGameEngine implements AiGameEngine {
 
 		// Set playerRole
 		playerRole = setup.playerRole;
-
-		// Iterates through and creates the game board and sets the fields to
-		// the appropriate values
-		// 0 = empty, 1 = sheep, 2 = fox
-		for (int x = 1; x <= 7; x++) {
-
-			gameBoard.add(new ArrayList<Integer>());
-
-			for (int y = 1; y <= 7; y++) {
-
-				if (y == 1 && (x == 3 || x == 5)) {
-					gameBoard.get(x).set(y, 2);
-				} else if (y >= 4) {
-					gameBoard.get(x).set(y, 1);
-				} else {
-					gameBoard.get(x).set(y, 0);
-				}
+		
+		// Set the starting positions of the foxes
+		foxPositions.add(new Position(3, 1));
+		foxPositions.add(new Position(5, 1));
+		
+		// Set the starting positions of the sheep
+		for(int y = 4; y <= 5; y++){
+			for(int x = 1; x <= 7; x++){	
+				sheepPositions.add(new Position(x, y));
+			}
+		}
+		for(int y = 6; y <= 7; y++){
+			for(int x = 3; x <= 5; x++){	
+				sheepPositions.add(new Position(x, y));
 			}
 		}
 	}
