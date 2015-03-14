@@ -1,2 +1,2 @@
-# fox-game-agent
-An implementation of a fox game agent
+# foxgame-agent
+An implementation of a foxgame agent
