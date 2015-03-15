@@ -26,6 +26,9 @@ public class FoxGameEngine implements AiGameEngine {
 
 	// TODO: Generate Successors
 
+	// TODO: Make sure Successors are generated properly, and that all that can
+	// be are
+
 	// TODO: Better player name?
 	/**
 	 * Holds the player name
@@ -101,7 +104,7 @@ public class FoxGameEngine implements AiGameEngine {
 			int x = sheepPosition.getX();
 			int y = sheepPosition.getY();
 
-			// Look for possible horizontal moves
+			// Look for possible moves
 
 			if (y <= 2) {
 
@@ -111,17 +114,31 @@ public class FoxGameEngine implements AiGameEngine {
 				// is
 				if (x == 3) {
 
-					// Set newPosition with a new Position
+					// Add new Positions to newPositions
 					newPositions.add(new Position(x + 1, y));
+
+					if (y == 2) {
+						newPositions.add(new Position(x, y - 1));
+					}
 
 				} else if (x == 5) {
 
 					newPositions.add(new Position(x - 1, y));
 
+					if (y == 2) {
+						newPositions.add(new Position(x, y - 1));
+					}
+
 				} else {
 
 					newPositions.add(new Position(x + 1, y));
 					newPositions.add(new Position(x - 1, y));
+
+					if (y == 2) {
+						newPositions.add(new Position(x, y - 1));
+						newPositions.add(new Position(x - 1, y - 1));
+						newPositions.add(new Position(x + 1, y - 1));
+					}
 
 				}
 			} else if (y >= 6) {
@@ -131,18 +148,35 @@ public class FoxGameEngine implements AiGameEngine {
 				if (x == 3) {
 
 					newPositions.add(new Position(x + 1, y));
+					newPositions.add(new Position(x, y - 1));
+
+					if (y == 7) {
+						newPositions.add(new Position(x + 1, y - 1));
+					}
 
 				} else if (x == 5) {
 
 					newPositions.add(new Position(x - 1, y));
+					newPositions.add(new Position(x, y - 1));
+
+					if (y == 7) {
+						newPositions.add(new Position(x - 1, y - 1));
+					}
 
 				} else {
 
 					newPositions.add(new Position(x + 1, y));
 					newPositions.add(new Position(x - 1, y));
+					newPositions.add(new Position(x, y - 1));
 
+					if (y == 6) {
+						newPositions.add(new Position(x + 1, y - 1));
+						newPositions.add(new Position(x - 1, y - 1));
+					}
 				}
-			} else if (y >= 3 && y <= 5) {
+			} else {
+
+				// TODO: Generate successors for these positions too
 
 				// The sheep is in the middle 21 positions
 
