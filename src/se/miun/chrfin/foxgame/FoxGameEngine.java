@@ -103,8 +103,9 @@ public class FoxGameEngine implements AiGameEngine {
 
 			// Look for possible horizontal moves
 
-			// If the sheep is in the 6 top positions
-			if (y == 1 || y == 2) {
+			if (y <= 2) {
+
+				// The sheep is in the top 6 positions
 
 				// Try to add positions depending on where the current position
 				// is
@@ -123,19 +124,52 @@ public class FoxGameEngine implements AiGameEngine {
 					newPositions.add(new Position(x - 1, y));
 
 				}
+			} else if (y >= 6) {
+
+				// The sheep is in the bottom 6 positions
+
+				if (x == 3) {
+
+					newPositions.add(new Position(x + 1, y));
+
+				} else if (x == 5) {
+
+					newPositions.add(new Position(x - 1, y));
+
+				} else {
+
+					newPositions.add(new Position(x + 1, y));
+					newPositions.add(new Position(x - 1, y));
+
+				}
+			} else if (y >= 3 && y <= 5) {
+
+				// The sheep is in the middle 21 positions
+
+				if (x == 1) {
+
+					newPositions.add(new Position(x + 1, y));
+
+				} else if (x == 7) {
+
+					newPositions.add(new Position(x - 1, y));
+
+				} else {
+
+					newPositions.add(new Position(x + 1, y));
+					newPositions.add(new Position(x - 1, y));
+
+				}
 			}
 
 			// Iterate through newPositions
 			for (Position newPosition : newPositions) {
 
 				// Add a new Successor if the new Positions is empty
-				switch (isOccupied(newPosition)) {
+				if (isOccupied(newPosition) == 0) {
 
-				case 0:
 					successor.changePostition(sheepPosition, newPosition);
 					successors.add(successor);
-					break;
-
 				}
 			}
 
