@@ -17,7 +17,8 @@ public class FoxGameEngine implements AiGameEngine {
 
 	// TODO: When are foxed removed exactly?
 
-	// TODO: Generate successors once, possibly in the constructor, and store
+	// TODO: Generate successors once --
+	// possibly in the constructor, and store
 	// them instead of making new ones every time.
 
 	// TODO: Account for time
@@ -26,8 +27,11 @@ public class FoxGameEngine implements AiGameEngine {
 
 	// TODO: Generate Successors
 
-	// TODO: Make sure Successors are generated properly, and that all that can
-	// be are
+	// TODO: Board must probably store the Position(s) that leads to it --
+	// so moves can be generated from it
+
+	// TODO: Make sure Successors are generated properly --
+	// and that all that can be are
 
 	// TODO: Better player name?
 	/**
@@ -109,36 +113,36 @@ public class FoxGameEngine implements AiGameEngine {
 
 			// Attempt to add new Positions based on horizontal and vertical
 			// moves to newPositions
-			newPositionRight(x, y);
-			newPositionUp(x, y);
-			newPositionLeft(x, y);
+			newPositionRight(x, y, false);
+			newPositionUp(x, y, false);
+			newPositionLeft(x, y, false);
 
 			// Attempt to add new Positions based on diagonal moves, when they
 			// can be made, to newPositions
 			if (y == 2 || y == 6) {
 				if (x == 4) {
-					newPositionUpLeft(x, y);
-					newPositionUpRight(x, y);
+					newPositionUpLeft(x, y, false);
+					newPositionUpRight(x, y, false);
 				}
 			} else if (y == 3) {
 				if (x == 3 || x == 5) {
-					newPositionUpLeft(x, y);
-					newPositionUpRight(x, y);
+					newPositionUpLeft(x, y, false);
+					newPositionUpRight(x, y, false);
 				}
 			} else if (y == 4) {
 				if (x == 2 || x == 4 || x == 6) {
-					newPositionUpLeft(x, y);
-					newPositionUpRight(x, y);
+					newPositionUpLeft(x, y, false);
+					newPositionUpRight(x, y, false);
 				}
 			} else if (y == 5) {
 				if (x == 1 || x == 3 || x == 5 || x == 7) {
-					newPositionUpLeft(x, y);
-					newPositionUpRight(x, y);
+					newPositionUpLeft(x, y, false);
+					newPositionUpRight(x, y, false);
 				}
 			} else if (y == 7) {
 				if (x == 3 || x == 5) {
-					newPositionUpLeft(x, y);
-					newPositionUpRight(x, y);
+					newPositionUpLeft(x, y, false);
+					newPositionUpRight(x, y, false);
 				}
 			}
 
@@ -159,11 +163,11 @@ public class FoxGameEngine implements AiGameEngine {
 	}
 
 	/**
-	 * get a list of Successors for a fox move
+	 * get a list of Successors for a normal fox move
 	 * 
 	 * @return An ArrayList holding Board objects representing the Successors
 	 */
-	private ArrayList<Board> getFoxSuccessors() {
+	private ArrayList<Board> getFoxNormalMovesSuccessors() {
 
 		// Holds the Successors
 		ArrayList<Board> successors = new ArrayList<Board>();
@@ -185,38 +189,120 @@ public class FoxGameEngine implements AiGameEngine {
 
 			// Attempt to add new Positions based on horizontal and vertical
 			// moves to newPositions
-			newPositionRight(x, y);
-			newPositionUp(x, y);
-			newPositionLeft(x, y);
-			newPositionDown(x, y);
+			newPositionRight(x, y, false);
+			newPositionUp(x, y, false);
+			newPositionLeft(x, y, false);
+			newPositionDown(x, y, false);
 
 			// Attempt to add new Positions based on diagonal moves, when they
 			// can be made, to newPositions
 			if (y == 1) {
 				if (x == 3 || x == 5) {
-					newPositionDownLeft(x, y);
-					newPositionDownRight(x, y);
+					newPositionDownLeft(x, y, false);
+					newPositionDownRight(x, y, false);
 				}
 			} else if (y == 2 || y == 6) {
 				if (x == 4) {
-					tryAddAllDiagonalNewPositions(x, y);
+					tryAddAllDiagonalNewPositions(x, y, false);
 				}
 			} else if (y == 3) {
 				if (x == 1 || x == 3 || x == 5 || x == 7) {
-					tryAddAllDiagonalNewPositions(x, y);
+					tryAddAllDiagonalNewPositions(x, y, false);
 				}
 			} else if (y == 4) {
 				if (x == 2 || x == 4 || x == 6) {
-					tryAddAllDiagonalNewPositions(x, y);
+					tryAddAllDiagonalNewPositions(x, y, false);
 				}
 			} else if (y == 5) {
 				if (x == 1 || x == 3 || x == 5 || x == 7) {
-					tryAddAllDiagonalNewPositions(x, y);
+					tryAddAllDiagonalNewPositions(x, y, false);
 				}
 			} else if (y == 7) {
 				if (x == 3 || x == 5) {
-					newPositionUpLeft(x, y);
-					newPositionUpRight(x, y);
+					newPositionUpLeft(x, y, false);
+					newPositionUpRight(x, y, false);
+				}
+			}
+
+			// Iterate through newPositions
+			for (Position newPosition : newPositions) {
+
+				// Add a new Successor if the new Positions is empty
+				if (isOccupied(newPosition) == 0) {
+
+					successor.changePostition(foxPosition, newPosition);
+					successors.add(successor);
+				}
+			}
+		}
+
+		// Return successors
+		return successors;
+	}
+
+	/**
+	 * get a list of Successors for a jump fox move
+	 * 
+	 * @return An ArrayList holding Board objects representing the Successors
+	 */
+	private ArrayList<Board> getFoxJumpSuccessors() {
+
+		// TODO: This is not implemented at all --
+		// code is copied from normal moves
+		// TODO: Account for jump in the newPosition methods
+
+		// Holds the Successors
+		ArrayList<Board> successors = new ArrayList<Board>();
+
+		// Holds a successor
+		Board successor;
+
+		// Iterate through foxPositions
+		for (Position foxPosition : board.getFoxPositions()) {
+
+			// Set successor to match board
+			successor = new Board(board);
+
+			// Get the x and y values of foxPosition
+			int x = foxPosition.getX();
+			int y = foxPosition.getY();
+
+			// Look for possible moves
+
+			// Attempt to add new Positions based on horizontal and vertical
+			// moves to newPositions
+			newPositionRight(x, y, true);
+			newPositionUp(x, y, true);
+			newPositionLeft(x, y, true);
+			newPositionDown(x, y, true);
+
+			// Attempt to add new Positions based on diagonal moves, when they
+			// can be made, to newPositions
+			if (y == 1) {
+				if (x == 3 || x == 5) {
+					newPositionDownLeft(x, y, true);
+					newPositionDownRight(x, y, true);
+				}
+			} else if (y == 2 || y == 6) {
+				if (x == 4) {
+					tryAddAllDiagonalNewPositions(x, y, true);
+				}
+			} else if (y == 3) {
+				if (x == 1 || x == 3 || x == 5 || x == 7) {
+					tryAddAllDiagonalNewPositions(x, y, true);
+				}
+			} else if (y == 4) {
+				if (x == 2 || x == 4 || x == 6) {
+					tryAddAllDiagonalNewPositions(x, y, true);
+				}
+			} else if (y == 5) {
+				if (x == 1 || x == 3 || x == 5 || x == 7) {
+					tryAddAllDiagonalNewPositions(x, y, true);
+				}
+			} else if (y == 7) {
+				if (x == 3 || x == 5) {
+					newPositionUpLeft(x, y, true);
+					newPositionUpRight(x, y, true);
 				}
 			}
 
@@ -266,12 +352,15 @@ public class FoxGameEngine implements AiGameEngine {
 	 *            The x value of the current Position
 	 * @param y
 	 *            The y value of the current Position
+	 * 
+	 * @param jump
+	 *            true if the move is a jump, else false
 	 */
-	private void tryAddAllDiagonalNewPositions(int x, int y) {
-		newPositionUpLeft(x, y);
-		newPositionUpRight(x, y);
-		newPositionDownLeft(x, y);
-		newPositionDownRight(x, y);
+	private void tryAddAllDiagonalNewPositions(int x, int y, boolean jump) {
+		newPositionUpLeft(x, y, jump);
+		newPositionUpRight(x, y, jump);
+		newPositionDownLeft(x, y, jump);
+		newPositionDownRight(x, y, jump);
 	}
 
 	/**
@@ -281,8 +370,10 @@ public class FoxGameEngine implements AiGameEngine {
 	 *            The x value of the current Position
 	 * @param y
 	 *            The y value of the current Position
+	 * @param jump
+	 *            true if the move is a jump, else false
 	 */
-	private void newPositionUp(int x, int y) {
+	private void newPositionUp(int x, int y, boolean jump) {
 		if (isPositionValid(x, y - 1)) {
 			newPositions.add(new Position(x, y - 1));
 		}
@@ -295,8 +386,10 @@ public class FoxGameEngine implements AiGameEngine {
 	 *            The x value of the current Position
 	 * @param y
 	 *            The y value of the current Position
+	 * @param jump
+	 *            true if the move is a jump, else false
 	 */
-	private void newPositionDown(int x, int y) {
+	private void newPositionDown(int x, int y, boolean jump) {
 		if (isPositionValid(x, y - 1)) {
 			newPositions.add(new Position(x, y - 1));
 		}
@@ -309,8 +402,10 @@ public class FoxGameEngine implements AiGameEngine {
 	 *            The x value of the current Position
 	 * @param y
 	 *            The y value of the current Position
+	 * @param jump
+	 *            true if the move is a jump, else false
 	 */
-	private void newPositionLeft(int x, int y) {
+	private void newPositionLeft(int x, int y, boolean jump) {
 		if (isPositionValid(x - 1, y)) {
 			newPositions.add(new Position(x - 1, y));
 		}
@@ -323,8 +418,10 @@ public class FoxGameEngine implements AiGameEngine {
 	 *            The x value of the current Position
 	 * @param y
 	 *            The y value of the current Position
+	 * @param jump
+	 *            true if the move is a jump, else false
 	 */
-	private void newPositionRight(int x, int y) {
+	private void newPositionRight(int x, int y, boolean jump) {
 		if (isPositionValid(x + 1, y)) {
 			newPositions.add(new Position(x + 1, y));
 		}
@@ -337,8 +434,10 @@ public class FoxGameEngine implements AiGameEngine {
 	 *            The x value of the current Position
 	 * @param y
 	 *            The y value of the current Position
+	 * @param jump
+	 *            true if the move is a jump, else false
 	 */
-	private void newPositionUpRight(int x, int y) {
+	private void newPositionUpRight(int x, int y, boolean jump) {
 		if (isPositionValid(x + 1, y - 1)) {
 			newPositions.add(new Position(x + 1, y - 1));
 		}
@@ -351,8 +450,10 @@ public class FoxGameEngine implements AiGameEngine {
 	 *            The x value of the current Position
 	 * @param y
 	 *            The y value of the current Position
+	 * @param jump
+	 *            true if the move is a jump, else false
 	 */
-	private void newPositionDownRight(int x, int y) {
+	private void newPositionDownRight(int x, int y, boolean jump) {
 		if (isPositionValid(x + 1, y + 1)) {
 			newPositions.add(new Position(x + 1, y + 1));
 		}
@@ -365,8 +466,10 @@ public class FoxGameEngine implements AiGameEngine {
 	 *            The x value of the current Position
 	 * @param y
 	 *            The y value of the current Position
+	 * @param jump
+	 *            true if the move is a jump, else false
 	 */
-	private void newPositionUpLeft(int x, int y) {
+	private void newPositionUpLeft(int x, int y, boolean jump) {
 		if (isPositionValid(x - 1, y - 1)) {
 			newPositions.add(new Position(x - 1, y - 1));
 		}
@@ -379,8 +482,10 @@ public class FoxGameEngine implements AiGameEngine {
 	 *            The x value of the current Position
 	 * @param y
 	 *            The y value of the current Position
+	 * @param jump
+	 *            true if the move is a jump, else false
 	 */
-	private void newPositionDownLeft(int x, int y) {
+	private void newPositionDownLeft(int x, int y, boolean jump) {
 		if (isPositionValid(x - 1, y + 1)) {
 			newPositions.add(new Position(x - 1, y + 1));
 		}
