@@ -83,12 +83,11 @@ public class FoxGameEngine implements AiGameEngine {
 	}
 
 	/**
-	 * get a list of Successors
+	 * get a list of Successors for a sheep move
 	 * 
-	 * @return An ArrayList with two ArrayLists holding the positions if the
-	 *         foxes and sheep
+	 * @return An ArrayList holding Board objects representing the Successors
 	 */
-	private ArrayList<ArrayList<Position>> getSuccessors() {
+	private ArrayList<Board> getSheepSuccessors() {
 
 		// Holds the Successors
 		ArrayList<Board> successors = new ArrayList<Board>();
@@ -108,109 +107,33 @@ public class FoxGameEngine implements AiGameEngine {
 
 			// Look for possible moves
 
-			if (y <= 2) {
+			// Attempt to add new Positions based on horizontal and vertical
+			// moves to newPositions
+			newPositionRight(x, y);
+			newPositionUp(x, y);
+			newPositionLeft(x, y);
 
-				// The sheep is in the top 6 positions
-
-				// Try to add positions depending on where the current position
-				// is
-				if (x == 3) {
-
-					// Add new Positions to newPositions
-					newPositionRight(x, y);
-
-					if (y == 2) {
-						newPositionUp(x, y);
-					}
-
-				} else if (x == 5) {
-					newPositionLeft(x, y);
-
-					if (y == 2) {
-						newPositionUp(x, y);
-					}
-
-				} else {
-					newPositionRight(x, y);
-					newPositionLeft(x, y);
-
-					if (y == 2) {
-						newPositionUp(x, y);
-						newPositionUpLeft(x, y);
-						newPositionUpRight(x, y);
-					}
-
+			// Attempt to add new Positions based on diagonal moves, when they
+			// can be made, to newPositions
+			if (y == 2 || y == 6) {
+				if (x == 4) {
+					newPositionUpLeft(x, y);
+					newPositionUpRight(x, y);
 				}
-			} else if (y >= 6) {
-
-				// The sheep is in the bottom 6 positions
-
-				if (x == 3) {
-					newPositionRight(x, y);
-					newPositionUp(x, y);
-
-					if (y == 7) {
-						newPositionUpRight(x, y);
-					}
-
-				} else if (x == 5) {
-					newPositionLeft(x, y);
-					newPositionUp(x, y);
-
-					if (y == 7) {
-						newPositionUpLeft(x, y);
-					}
-
-				} else {
-					newPositionRight(x, y);
-					newPositionLeft(x, y);
-					newPositionUp(x, y);
-
-					if (y == 6) {
-						newPositionUpRight(x, y);
-						newPositionUpLeft(x, y);
-					}
+			} else if (y == 3) {
+				if (x == 3 || x == 5) {
+					newPositionUpLeft(x, y);
+					newPositionUpRight(x, y);
 				}
-			} else {
-
-				// The sheep is in the middle 21 positions
-
-				// If the sheep can move upwards
-				if (!(y == 3 && (x <= 2 || x >= 6))) {
-					newPositionUp(x, y);
+			} else if (y == 4) {
+				if (x == 2 || x == 4 || x == 6) {
+					newPositionUpLeft(x, y);
+					newPositionUpRight(x, y);
 				}
-
-				// Sideways moves
-				if (x == 1) {
-					newPositionRight(x, y);
-				} else if (x == 7) {
-					newPositionLeft(x, y);
-				} else {
-					newPositionRight(x, y);
-					newPositionLeft(x, y);
-				}
-
-				// Diagonal moves
-				if (y == 5) {
-					if (x == 1) {
-						newPositionUpRight(x, y);
-					} else if (x == 7) {
-						newPositionUpLeft(x, y);
-					} else if (x == 3 || x == 5) {
-						newPositionUpRight(x, y);
-						newPositionUpLeft(x, y);
-					}
-				} else if (y == 4) {
-					if (x == 2 || x == 4 || x == 6) {
-						newPositionUpRight(x, y);
-						newPositionUpLeft(x, y);
-					}
-				} else if (y == 3) {
-					if (x == 3) {
-						newPositionUpRight(x, y);
-					} else if (x == 5) {
-						newPositionUpLeft(x, y);
-					}
+			} else if (y == 5) {
+				if (x == 1 || x == 3 || x == 5 || x == 7) {
+					newPositionUpLeft(x, y);
+					newPositionUpRight(x, y);
 				}
 			}
 
@@ -224,10 +147,33 @@ public class FoxGameEngine implements AiGameEngine {
 					successors.add(successor);
 				}
 			}
-
 		}
 
-		return null;
+		// Return successors
+		return successors;
+	}
+
+	/**
+	 * Check if an x, y position is on the board
+	 * 
+	 * @param x
+	 *            The x value of the position
+	 * @param y
+	 *            The y value of the position
+	 * @return true if the position x, y is on the board, else false
+	 */
+	private boolean isPositionValid(int x, int y) {
+
+		if (y <= 2 || y >= 6) {
+			if (x <= 2 || x >= 6) {
+				return false;
+			}
+		} else {
+			if (x < 1 || x > 7) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**
@@ -239,7 +185,9 @@ public class FoxGameEngine implements AiGameEngine {
 	 *            The y value of the current Position
 	 */
 	private void newPositionUp(int x, int y) {
-		newPositions.add(new Position(x, y - 1));
+		if (isPositionValid(x, y - 1)) {
+			newPositions.add(new Position(x, y - 1));
+		}
 	}
 
 	/**
@@ -251,7 +199,9 @@ public class FoxGameEngine implements AiGameEngine {
 	 *            The y value of the current Position
 	 */
 	private void newPositionLeft(int x, int y) {
-		newPositions.add(new Position(x - 1, y));
+		if (isPositionValid(x - 1, y)) {
+			newPositions.add(new Position(x - 1, y));
+		}
 	}
 
 	/**
@@ -263,7 +213,9 @@ public class FoxGameEngine implements AiGameEngine {
 	 *            The y value of the current Position
 	 */
 	private void newPositionRight(int x, int y) {
-		newPositions.add(new Position(x + 1, y));
+		if (isPositionValid(x + 1, y)) {
+			newPositions.add(new Position(x + 1, y));
+		}
 	}
 
 	/**
@@ -275,7 +227,9 @@ public class FoxGameEngine implements AiGameEngine {
 	 *            The y value of the current Position
 	 */
 	private void newPositionUpRight(int x, int y) {
-		newPositions.add(new Position(x + 1, y - 1));
+		if (isPositionValid(x + 1, y - 1)) {
+			newPositions.add(new Position(x + 1, y - 1));
+		}
 	}
 
 	/**
@@ -287,7 +241,9 @@ public class FoxGameEngine implements AiGameEngine {
 	 *            The y value of the current Position
 	 */
 	private void newPositionUpLeft(int x, int y) {
-		newPositions.add(new Position(x - 1, y - 1));
+		if (isPositionValid(x - 1, y - 1)) {
+			newPositions.add(new Position(x - 1, y - 1));
+		}
 	}
 
 	/**
