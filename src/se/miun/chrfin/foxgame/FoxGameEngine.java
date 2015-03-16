@@ -113,36 +113,36 @@ public class FoxGameEngine implements AiGameEngine {
 
 			// Attempt to add new Positions based on horizontal and vertical
 			// moves to newPositions
-			newPositionRight(x, y, false);
-			newPositionUp(x, y, false);
-			newPositionLeft(x, y, false);
+			newPositionRight(x, y, 1);
+			newPositionUp(x, y, 1);
+			newPositionLeft(x, y, 1);
 
 			// Attempt to add new Positions based on diagonal moves, when they
 			// can be made, to newPositions
 			if (y == 2 || y == 6) {
 				if (x == 4) {
-					newPositionUpLeft(x, y, false);
-					newPositionUpRight(x, y, false);
+					newPositionUpLeft(x, y, 1);
+					newPositionUpRight(x, y, 1);
 				}
 			} else if (y == 3) {
 				if (x == 3 || x == 5) {
-					newPositionUpLeft(x, y, false);
-					newPositionUpRight(x, y, false);
+					newPositionUpLeft(x, y, 1);
+					newPositionUpRight(x, y, 1);
 				}
 			} else if (y == 4) {
 				if (x == 2 || x == 4 || x == 6) {
-					newPositionUpLeft(x, y, false);
-					newPositionUpRight(x, y, false);
+					newPositionUpLeft(x, y, 1);
+					newPositionUpRight(x, y, 1);
 				}
 			} else if (y == 5) {
 				if (x == 1 || x == 3 || x == 5 || x == 7) {
-					newPositionUpLeft(x, y, false);
-					newPositionUpRight(x, y, false);
+					newPositionUpLeft(x, y, 1);
+					newPositionUpRight(x, y, 1);
 				}
 			} else if (y == 7) {
 				if (x == 3 || x == 5) {
-					newPositionUpLeft(x, y, false);
-					newPositionUpRight(x, y, false);
+					newPositionUpLeft(x, y, 1);
+					newPositionUpRight(x, y, 1);
 				}
 			}
 
@@ -189,38 +189,38 @@ public class FoxGameEngine implements AiGameEngine {
 
 			// Attempt to add new Positions based on horizontal and vertical
 			// moves to newPositions
-			newPositionRight(x, y, false);
-			newPositionUp(x, y, false);
-			newPositionLeft(x, y, false);
-			newPositionDown(x, y, false);
+			newPositionRight(x, y, 1);
+			newPositionUp(x, y, 1);
+			newPositionLeft(x, y, 1);
+			newPositionDown(x, y, 1);
 
 			// Attempt to add new Positions based on diagonal moves, when they
 			// can be made, to newPositions
 			if (y == 1) {
 				if (x == 3 || x == 5) {
-					newPositionDownLeft(x, y, false);
-					newPositionDownRight(x, y, false);
+					newPositionDownLeft(x, y, 1);
+					newPositionDownRight(x, y, 1);
 				}
 			} else if (y == 2 || y == 6) {
 				if (x == 4) {
-					tryAddAllDiagonalNewPositions(x, y, false);
+					tryAddAllDiagonalNewPositions(x, y, 1);
 				}
 			} else if (y == 3) {
 				if (x == 1 || x == 3 || x == 5 || x == 7) {
-					tryAddAllDiagonalNewPositions(x, y, false);
+					tryAddAllDiagonalNewPositions(x, y, 1);
 				}
 			} else if (y == 4) {
 				if (x == 2 || x == 4 || x == 6) {
-					tryAddAllDiagonalNewPositions(x, y, false);
+					tryAddAllDiagonalNewPositions(x, y, 1);
 				}
 			} else if (y == 5) {
 				if (x == 1 || x == 3 || x == 5 || x == 7) {
-					tryAddAllDiagonalNewPositions(x, y, false);
+					tryAddAllDiagonalNewPositions(x, y, 1);
 				}
 			} else if (y == 7) {
 				if (x == 3 || x == 5) {
-					newPositionUpLeft(x, y, false);
-					newPositionUpRight(x, y, false);
+					newPositionUpLeft(x, y, 1);
+					newPositionUpRight(x, y, 1);
 				}
 			}
 
@@ -249,7 +249,6 @@ public class FoxGameEngine implements AiGameEngine {
 
 		// TODO: This is not implemented at all --
 		// code is copied from normal moves
-		// TODO: Account for jump in the newPosition methods
 
 		// Holds the Successors
 		ArrayList<Board> successors = new ArrayList<Board>();
@@ -271,38 +270,38 @@ public class FoxGameEngine implements AiGameEngine {
 
 			// Attempt to add new Positions based on horizontal and vertical
 			// moves to newPositions
-			newPositionRight(x, y, true);
-			newPositionUp(x, y, true);
-			newPositionLeft(x, y, true);
-			newPositionDown(x, y, true);
+			newPositionRight(x, y, 2);
+			newPositionUp(x, y, 2);
+			newPositionLeft(x, y, 2);
+			newPositionDown(x, y, 2);
 
 			// Attempt to add new Positions based on diagonal moves, when they
 			// can be made, to newPositions
 			if (y == 1) {
 				if (x == 3 || x == 5) {
-					newPositionDownLeft(x, y, true);
-					newPositionDownRight(x, y, true);
+					newPositionDownLeft(x, y, 2);
+					newPositionDownRight(x, y, 2);
 				}
 			} else if (y == 2 || y == 6) {
 				if (x == 4) {
-					tryAddAllDiagonalNewPositions(x, y, true);
+					tryAddAllDiagonalNewPositions(x, y, 2);
 				}
 			} else if (y == 3) {
 				if (x == 1 || x == 3 || x == 5 || x == 7) {
-					tryAddAllDiagonalNewPositions(x, y, true);
+					tryAddAllDiagonalNewPositions(x, y, 2);
 				}
 			} else if (y == 4) {
 				if (x == 2 || x == 4 || x == 6) {
-					tryAddAllDiagonalNewPositions(x, y, true);
+					tryAddAllDiagonalNewPositions(x, y, 2);
 				}
 			} else if (y == 5) {
 				if (x == 1 || x == 3 || x == 5 || x == 7) {
-					tryAddAllDiagonalNewPositions(x, y, true);
+					tryAddAllDiagonalNewPositions(x, y, 2);
 				}
 			} else if (y == 7) {
 				if (x == 3 || x == 5) {
-					newPositionUpLeft(x, y, true);
-					newPositionUpRight(x, y, true);
+					newPositionUpLeft(x, y, 2);
+					newPositionUpRight(x, y, 2);
 				}
 			}
 
@@ -353,14 +352,15 @@ public class FoxGameEngine implements AiGameEngine {
 	 * @param y
 	 *            The y value of the current Position
 	 * 
-	 * @param jump
-	 *            true if the move is a jump, else false
+	 * @param step
+	 *            The nr of steps to move in a direction
+	 * 
 	 */
-	private void tryAddAllDiagonalNewPositions(int x, int y, boolean jump) {
-		newPositionUpLeft(x, y, jump);
-		newPositionUpRight(x, y, jump);
-		newPositionDownLeft(x, y, jump);
-		newPositionDownRight(x, y, jump);
+	private void tryAddAllDiagonalNewPositions(int x, int y, int step) {
+		newPositionUpLeft(x, y, step);
+		newPositionUpRight(x, y, step);
+		newPositionDownLeft(x, y, step);
+		newPositionDownRight(x, y, step);
 	}
 
 	/**
@@ -373,9 +373,13 @@ public class FoxGameEngine implements AiGameEngine {
 	 * @param jump
 	 *            true if the move is a jump, else false
 	 */
-	private void newPositionUp(int x, int y, boolean jump) {
-		if (isPositionValid(x, y - 1)) {
-			newPositions.add(new Position(x, y - 1));
+	private void newPositionUp(int x, int y, int step) {
+		if (isPositionValid(x, y - step)) {
+			if (step == 2) {
+				if (isOccupied(new Position(x, y - 1)) == 1) {
+					newPositions.add(new Position(x, y - step));
+				}
+			}
 		}
 	}
 
@@ -386,12 +390,16 @@ public class FoxGameEngine implements AiGameEngine {
 	 *            The x value of the current Position
 	 * @param y
 	 *            The y value of the current Position
-	 * @param jump
-	 *            true if the move is a jump, else false
+	 * @param step
+	 *            The nr of steps to move in a direction
 	 */
-	private void newPositionDown(int x, int y, boolean jump) {
-		if (isPositionValid(x, y - 1)) {
-			newPositions.add(new Position(x, y - 1));
+	private void newPositionDown(int x, int y, int step) {
+		if (isPositionValid(x, y + step)) {
+			if (step == 2) {
+				if (isOccupied(new Position(x, y + 1)) == 1) {
+					newPositions.add(new Position(x, y + step));
+				}
+			}
 		}
 	}
 
@@ -402,12 +410,16 @@ public class FoxGameEngine implements AiGameEngine {
 	 *            The x value of the current Position
 	 * @param y
 	 *            The y value of the current Position
-	 * @param jump
-	 *            true if the move is a jump, else false
+	 * @param step
+	 *            The nr of steps to move in a direction
 	 */
-	private void newPositionLeft(int x, int y, boolean jump) {
-		if (isPositionValid(x - 1, y)) {
-			newPositions.add(new Position(x - 1, y));
+	private void newPositionLeft(int x, int y, int step) {
+		if (isPositionValid(x - step, y)) {
+			if (step == 2) {
+				if (isOccupied(new Position(x - 1, y)) == 1) {
+					newPositions.add(new Position(x - step, y));
+				}
+			}
 		}
 	}
 
@@ -418,12 +430,16 @@ public class FoxGameEngine implements AiGameEngine {
 	 *            The x value of the current Position
 	 * @param y
 	 *            The y value of the current Position
-	 * @param jump
-	 *            true if the move is a jump, else false
+	 * @param step
+	 *            The nr of steps to move in a direction
 	 */
-	private void newPositionRight(int x, int y, boolean jump) {
-		if (isPositionValid(x + 1, y)) {
-			newPositions.add(new Position(x + 1, y));
+	private void newPositionRight(int x, int y, int step) {
+		if (isPositionValid(x + step, y)) {
+			if (step == 2) {
+				if (isOccupied(new Position(x + 1, y)) == 1) {
+					newPositions.add(new Position(x + step, y));
+				}
+			}
 		}
 	}
 
@@ -434,12 +450,16 @@ public class FoxGameEngine implements AiGameEngine {
 	 *            The x value of the current Position
 	 * @param y
 	 *            The y value of the current Position
-	 * @param jump
-	 *            true if the move is a jump, else false
+	 * @param step
+	 *            The nr of steps to move in a direction
 	 */
-	private void newPositionUpRight(int x, int y, boolean jump) {
-		if (isPositionValid(x + 1, y - 1)) {
-			newPositions.add(new Position(x + 1, y - 1));
+	private void newPositionUpRight(int x, int y, int step) {
+		if (isPositionValid(x + step, y - step)) {
+			if (step == 2) {
+				if (isOccupied(new Position(x, y - 1)) == 1) {
+					newPositions.add(new Position(x + step, y - step));
+				}
+			}
 		}
 	}
 
@@ -450,12 +470,16 @@ public class FoxGameEngine implements AiGameEngine {
 	 *            The x value of the current Position
 	 * @param y
 	 *            The y value of the current Position
-	 * @param jump
-	 *            true if the move is a jump, else false
+	 * @param step
+	 *            The nr of steps to move in a direction
 	 */
-	private void newPositionDownRight(int x, int y, boolean jump) {
-		if (isPositionValid(x + 1, y + 1)) {
-			newPositions.add(new Position(x + 1, y + 1));
+	private void newPositionDownRight(int x, int y, int step) {
+		if (isPositionValid(x + step, y + step)) {
+			if (step == 2) {
+				if (isOccupied(new Position(x + 1, y + 1)) == 1) {
+					newPositions.add(new Position(x + step, y + step));
+				}
+			}
 		}
 	}
 
@@ -466,12 +490,16 @@ public class FoxGameEngine implements AiGameEngine {
 	 *            The x value of the current Position
 	 * @param y
 	 *            The y value of the current Position
-	 * @param jump
-	 *            true if the move is a jump, else false
+	 * @param step
+	 *            The nr of steps to move in a direction
 	 */
-	private void newPositionUpLeft(int x, int y, boolean jump) {
-		if (isPositionValid(x - 1, y - 1)) {
-			newPositions.add(new Position(x - 1, y - 1));
+	private void newPositionUpLeft(int x, int y, int step) {
+		if (isPositionValid(x - step, y - step)) {
+			if (step == 2) {
+				if (isOccupied(new Position(x - 1, y - 1)) == 1) {
+					newPositions.add(new Position(x - step, y - step));
+				}
+			}
 		}
 	}
 
@@ -482,10 +510,10 @@ public class FoxGameEngine implements AiGameEngine {
 	 *            The x value of the current Position
 	 * @param y
 	 *            The y value of the current Position
-	 * @param jump
-	 *            true if the move is a jump, else false
+	 * @param step
+	 *            The nr of steps to move in a direction
 	 */
-	private void newPositionDownLeft(int x, int y, boolean jump) {
+	private void newPositionDownLeft(int x, int y, int step) {
 		if (isPositionValid(x - 1, y + 1)) {
 			newPositions.add(new Position(x - 1, y + 1));
 		}
