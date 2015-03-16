@@ -46,6 +46,11 @@ public class FoxGameEngine implements AiGameEngine {
 	private Board board = new Board();
 
 	/**
+	 * Holds the new Positions
+	 */
+	ArrayList<Position> newPositions = new ArrayList<Position>();
+
+	/**
 	 * Constructor
 	 * 
 	 * @param setup
@@ -91,9 +96,6 @@ public class FoxGameEngine implements AiGameEngine {
 		// Holds a successor
 		Board successor;
 
-		// Holds the new Positions
-		ArrayList<Position> newPositions = new ArrayList<Position>();
-
 		// Iterate through sheepPositions
 		for (Position sheepPosition : board.getSheepPositions()) {
 
@@ -115,29 +117,27 @@ public class FoxGameEngine implements AiGameEngine {
 				if (x == 3) {
 
 					// Add new Positions to newPositions
-					newPositions.add(new Position(x + 1, y));
+					newPositionRight(x, y);
 
 					if (y == 2) {
-						newPositions.add(new Position(x, y - 1));
+						newPositionUp(x, y);
 					}
 
 				} else if (x == 5) {
-
-					newPositions.add(new Position(x - 1, y));
+					newPositionLeft(x, y);
 
 					if (y == 2) {
-						newPositions.add(new Position(x, y - 1));
+						newPositionUp(x, y);
 					}
 
 				} else {
-
-					newPositions.add(new Position(x + 1, y));
-					newPositions.add(new Position(x - 1, y));
+					newPositionRight(x, y);
+					newPositionLeft(x, y);
 
 					if (y == 2) {
-						newPositions.add(new Position(x, y - 1));
-						newPositions.add(new Position(x - 1, y - 1));
-						newPositions.add(new Position(x + 1, y - 1));
+						newPositionUp(x, y);
+						newPositionUpLeft(x, y);
+						newPositionUpRight(x, y);
 					}
 
 				}
@@ -146,53 +146,71 @@ public class FoxGameEngine implements AiGameEngine {
 				// The sheep is in the bottom 6 positions
 
 				if (x == 3) {
-
-					newPositions.add(new Position(x + 1, y));
-					newPositions.add(new Position(x, y - 1));
+					newPositionRight(x, y);
+					newPositionUp(x, y);
 
 					if (y == 7) {
-						newPositions.add(new Position(x + 1, y - 1));
+						newPositionUpRight(x, y);
 					}
 
 				} else if (x == 5) {
-
-					newPositions.add(new Position(x - 1, y));
-					newPositions.add(new Position(x, y - 1));
+					newPositionLeft(x, y);
+					newPositionUp(x, y);
 
 					if (y == 7) {
-						newPositions.add(new Position(x - 1, y - 1));
+						newPositionUpLeft(x, y);
 					}
 
 				} else {
-
-					newPositions.add(new Position(x + 1, y));
-					newPositions.add(new Position(x - 1, y));
-					newPositions.add(new Position(x, y - 1));
+					newPositionRight(x, y);
+					newPositionLeft(x, y);
+					newPositionUp(x, y);
 
 					if (y == 6) {
-						newPositions.add(new Position(x + 1, y - 1));
-						newPositions.add(new Position(x - 1, y - 1));
+						newPositionUpRight(x, y);
+						newPositionUpLeft(x, y);
 					}
 				}
 			} else {
 
-				// TODO: Generate successors for these positions too
-
 				// The sheep is in the middle 21 positions
 
+				// If the sheep can move upwards
+				if (!(y == 3 && (x <= 2 || x >= 6))) {
+					newPositionUp(x, y);
+				}
+
+				// Sideways moves
 				if (x == 1) {
-
-					newPositions.add(new Position(x + 1, y));
-
+					newPositionRight(x, y);
 				} else if (x == 7) {
-
-					newPositions.add(new Position(x - 1, y));
-
+					newPositionLeft(x, y);
 				} else {
+					newPositionRight(x, y);
+					newPositionLeft(x, y);
+				}
 
-					newPositions.add(new Position(x + 1, y));
-					newPositions.add(new Position(x - 1, y));
-
+				// Diagonal moves
+				if (y == 5) {
+					if (x == 1) {
+						newPositionUpRight(x, y);
+					} else if (x == 7) {
+						newPositionUpLeft(x, y);
+					} else if (x == 3 || x == 5) {
+						newPositionUpRight(x, y);
+						newPositionUpLeft(x, y);
+					}
+				} else if (y == 4) {
+					if (x == 2 || x == 4 || x == 6) {
+						newPositionUpRight(x, y);
+						newPositionUpLeft(x, y);
+					}
+				} else if (y == 3) {
+					if (x == 3) {
+						newPositionUpRight(x, y);
+					} else if (x == 5) {
+						newPositionUpLeft(x, y);
+					}
 				}
 			}
 
@@ -210,6 +228,66 @@ public class FoxGameEngine implements AiGameEngine {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Creates and ads a new Position object to newPositions
+	 * 
+	 * @param x
+	 *            The x value of the current Position
+	 * @param y
+	 *            The y value of the current Position
+	 */
+	private void newPositionUp(int x, int y) {
+		newPositions.add(new Position(x, y - 1));
+	}
+
+	/**
+	 * Creates and ads a new Position object to newPositions
+	 * 
+	 * @param x
+	 *            The x value of the current Position
+	 * @param y
+	 *            The y value of the current Position
+	 */
+	private void newPositionLeft(int x, int y) {
+		newPositions.add(new Position(x - 1, y));
+	}
+
+	/**
+	 * Creates and ads a new Position object to newPositions
+	 * 
+	 * @param x
+	 *            The x value of the current Position
+	 * @param y
+	 *            The y value of the current Position
+	 */
+	private void newPositionRight(int x, int y) {
+		newPositions.add(new Position(x + 1, y));
+	}
+
+	/**
+	 * Creates and ads a new Position object to newPositions
+	 * 
+	 * @param x
+	 *            The x value of the current Position
+	 * @param y
+	 *            The y value of the current Position
+	 */
+	private void newPositionUpRight(int x, int y) {
+		newPositions.add(new Position(x + 1, y - 1));
+	}
+
+	/**
+	 * Creates and ads a new Position object to newPositions
+	 * 
+	 * @param x
+	 *            The x value of the current Position
+	 * @param y
+	 *            The y value of the current Position
+	 */
+	private void newPositionUpLeft(int x, int y) {
+		newPositions.add(new Position(x - 1, y - 1));
 	}
 
 	/**
