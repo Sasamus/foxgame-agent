@@ -189,10 +189,7 @@ public class FoxGameEngine implements AiGameEngine {
 
 			// Attempt to add new Positions based on horizontal and vertical
 			// moves to newPositions
-			newPositionRight(x, y, 1);
-			newPositionUp(x, y, 1);
-			newPositionLeft(x, y, 1);
-			newPositionDown(x, y, 1);
+			tryAddAllHorizontalAndVerticalNewPositions(x, y, 1);
 
 			// Attempt to add new Positions based on diagonal moves, when they
 			// can be made, to newPositions
@@ -270,10 +267,7 @@ public class FoxGameEngine implements AiGameEngine {
 
 			// Attempt to add new Positions based on horizontal and vertical
 			// moves to newPositions
-			newPositionRight(x, y, 2);
-			newPositionUp(x, y, 2);
-			newPositionLeft(x, y, 2);
-			newPositionDown(x, y, 2);
+			tryAddAllHorizontalAndVerticalNewPositions(x, y, 2);
 
 			// Attempt to add new Positions based on diagonal moves, when they
 			// can be made, to newPositions
@@ -361,6 +355,25 @@ public class FoxGameEngine implements AiGameEngine {
 		newPositionUpRight(x, y, step);
 		newPositionDownLeft(x, y, step);
 		newPositionDownRight(x, y, step);
+	}
+	
+	/**
+	 * Calls all newPosition methods for horizontal and vertical moves
+	 * 
+	 * @param x
+	 *            The x value of the current Position
+	 * @param y
+	 *            The y value of the current Position
+	 * 
+	 * @param step
+	 *            The nr of steps to move in a direction
+	 * 
+	 */
+	private void tryAddAllHorizontalAndVerticalNewPositions(int x, int y, int step) {
+		newPositionUp(x, y, step);
+		newPositionDown(x, y, step);
+		newPositionLeft(x, y, step);
+		newPositionRight(x, y, step);
 	}
 
 	/**
