@@ -15,8 +15,6 @@ public class FoxGameEngine implements AiGameEngine {
 
 	// TODO: See if there are faster variables/collections to use.
 
-	// TODO: When are foxed removed exactly?
-
 	// TODO: Generate successors once --
 	// possibly in the constructor, and store
 	// them instead of making new ones every time.
@@ -24,11 +22,6 @@ public class FoxGameEngine implements AiGameEngine {
 	// TODO: Account for time
 
 	// TODO: Get a move
-
-	// TODO: Generate Successors
-
-	// TODO: Board must probably store the Position(s) that leads to it --
-	// so moves can be generated from it
 
 	// TODO: Make sure Successors are generated properly --
 	// and that all that can be are
@@ -73,17 +66,33 @@ public class FoxGameEngine implements AiGameEngine {
 	@Override
 	public String getMove(GameStatus status) {
 
-		// Holds the possible moves to make
-		ArrayList<Move> possibleMoves = new ArrayList<Move>();
+		// Holds the Successors
+		ArrayList<Board> successors = new ArrayList<Board>();
 
 		// Acts depending on if playerRole equals FOX or SHEEP
 		if (playerRole.equals("FOX")) {
-
+			getFoxSuccessors(successors, false);
+			getFoxSuccessors(successors, true);
 		} else {
-
+			getSheepSuccessors(successors);
 		}
+		
+		Move move = Move.move(getBestSuccessor(successors, true).getChangedPositions());
 
-		return null;
+		return move.toString();
+	}
+	
+	/**
+	 * Gets the best Successor
+	 * 
+	 * @param successors The Successors available
+	 * @param fox True if a fox move, false if a sheep move
+	 */
+	private Board getBestSuccessor(ArrayList<Board> successors, boolean fox){
+		
+		// TODO: Implement this
+		
+		return successors.get(0);
 	}
 
 	/**
@@ -91,10 +100,7 @@ public class FoxGameEngine implements AiGameEngine {
 	 * 
 	 * @return An ArrayList holding Board objects representing the Successors
 	 */
-	private ArrayList<Board> getSheepSuccessors() {
-
-		// Holds the Successors
-		ArrayList<Board> successors = new ArrayList<Board>();
+	private void getSheepSuccessors(ArrayList<Board> successors) {
 
 		// Holds a successor
 		Board successor;
@@ -158,9 +164,6 @@ public class FoxGameEngine implements AiGameEngine {
 				}
 			}
 		}
-
-		// Return successors
-		return successors;
 	}
 
 	/**
@@ -171,7 +174,7 @@ public class FoxGameEngine implements AiGameEngine {
 	 * @param jump
 	 *            True if generating successors for jumps, else false
 	 */
-	private void getFoxMovesSuccessors(ArrayList<Board> successors, boolean jump) {
+	private void getFoxSuccessors(ArrayList<Board> successors, boolean jump) {
 
 		int step = 1;
 
@@ -241,7 +244,7 @@ public class FoxGameEngine implements AiGameEngine {
 					}
 				}
 			} else {
-				// TODO: Handle jumos
+
 				// Iterate through newPositions
 				for (Position newPosition : newPositions) {
 
@@ -254,7 +257,7 @@ public class FoxGameEngine implements AiGameEngine {
 
 						// Call getFoxMoveSuccessors again, since a jump alows
 						// for more jumps
-						getFoxMovesSuccessors(successors, true);
+						getFoxSuccessors(successors, true);
 					}
 				}
 			}
