@@ -290,15 +290,16 @@ public class FoxGameEngine implements AiGameEngine {
 	 * @return true if the position x, y is on the board, else false
 	 */
 	private boolean isPositionValid(int x, int y) {
-
-		if (y <= 2 || y >= 6) {
+		
+		if(y < 1 || y > 7){
+			return false;
+		}
+		else if (y <= 2 || y >= 6) {
 			if (x <= 2 || x >= 6) {
 				return false;
 			}
-		} else {
-			if (x < 1 || x > 7) {
-				return false;
-			}
+		} else if (x < 1 || x > 7) {
+			return false;
 		}
 		return true;
 	}
