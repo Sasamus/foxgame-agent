@@ -63,16 +63,14 @@ public class FoxGameEngine implements AiGameEngine {
 
 		// Acts depending on if status.playerRole equals FOX or SHEEP
 		if (status.playerRole.equals("FOX")) {
-			getFoxSuccessors(successors, null, false);
-			getFoxSuccessors(successors, null, true);
+			getFoxSuccessors(successors, null, null, false);
+			getFoxSuccessors(successors, null, null, true);
 		} else {
 			getSheepSuccessors(successors);
 		}
 
 		Move move = Move.move(getBestSuccessor(successors, true)
 				.getChangedPositions());
-
-		System.out.println("Move: " + move.toString());
 
 		return move.toString();
 	}
@@ -172,7 +170,7 @@ public class FoxGameEngine implements AiGameEngine {
 	 *            True if generating successors for jumps, else false
 	 */
 	private void getFoxSuccessors(ArrayList<Board> successors,
-			Board alreadyJumpedBoard, boolean jump) {
+			Board alreadyJumpedBoard, Position foxToJump, boolean jump) {
 
 		// The nr of steps to move
 		int step = 1;
@@ -187,18 +185,27 @@ public class FoxGameEngine implements AiGameEngine {
 
 		// Holds a successor
 		Board successor;
+		
+		// Holds the fox(es) that are allowed jump
+		ArrayList<Position> foxesToJump = new ArrayList<Position>();
 
 		// Acts depending on if jumps have happened
 		if (alreadyJumpedBoard == null) {
 			// Set successor to match board
 			successor = new Board(board);
+			
+			// Set foxesToJump to successors foxPositions
+			foxesToJump = successor.getFoxPositions();
 		} else {
 			// Set successor to match alreadyJumpedBoard
 			successor = new Board(alreadyJumpedBoard);
+			
+			// Set foxesToJump to foxToJump
+			foxesToJump.add(foxToJump);
 		}
 
 		// Iterate through foxPositions
-		for (Position foxPosition : successor.getFoxPositions()) {
+		for (Position foxPosition : foxesToJump) {
 
 			// Acts depending on if jumps have happened
 			if (alreadyJumpedBoard == null) {
@@ -262,6 +269,8 @@ public class FoxGameEngine implements AiGameEngine {
 					}
 				}
 			} else {
+				
+				System.out.println("Positions: " + newPositions.size());
 
 				// Iterate through newPositions
 				for (Position newPosition : newPositions) {
@@ -275,7 +284,7 @@ public class FoxGameEngine implements AiGameEngine {
 
 						// Call getFoxMoveSuccessors again, since several jumps
 						// are allowed
-						getFoxSuccessors(successors, successor, true);
+						getFoxSuccessors(successors, successor, foxPosition, true);
 					}
 				}
 			}
@@ -344,7 +353,7 @@ public class FoxGameEngine implements AiGameEngine {
 	}
 
 	/**
-	 * Creates and ads a new Position object to newPositions
+	 * Creates and adds a new Position object to newPositions
 	 * 
 	 * @param x
 	 *            The x value of the current Position
@@ -366,7 +375,7 @@ public class FoxGameEngine implements AiGameEngine {
 	}
 
 	/**
-	 * Creates and ads a new Position object to newPositions
+	 * Creates and adds a new Position object to newPositions
 	 * 
 	 * @param x
 	 *            The x value of the current Position
@@ -388,7 +397,7 @@ public class FoxGameEngine implements AiGameEngine {
 	}
 
 	/**
-	 * Creates and ads a new Position object to newPositions
+	 * Creates and adds a new Position object to newPositions
 	 * 
 	 * @param x
 	 *            The x value of the current Position
@@ -410,7 +419,7 @@ public class FoxGameEngine implements AiGameEngine {
 	}
 
 	/**
-	 * Creates and ads a new Position object to newPositions
+	 * Creates and adds a new Position object to newPositions
 	 * 
 	 * @param x
 	 *            The x value of the current Position
@@ -432,7 +441,7 @@ public class FoxGameEngine implements AiGameEngine {
 	}
 
 	/**
-	 * Creates and ads a new Position object to newPositions
+	 * Creates and adds a new Position object to newPositions
 	 * 
 	 * @param x
 	 *            The x value of the current Position
@@ -444,7 +453,7 @@ public class FoxGameEngine implements AiGameEngine {
 	private void newPositionUpRight(int x, int y, int step) {
 		if (isPositionValid(x + step, y - step)) {
 			if (step == 2) {
-				if (isOccupied(new Position(x, y - 1)) == 1) {
+				if (isOccupied(new Position(x + 1, y - 1)) == 1) {
 					newPositions.add(new Position(x + step, y - step));
 				}
 			} else {
@@ -454,7 +463,7 @@ public class FoxGameEngine implements AiGameEngine {
 	}
 
 	/**
-	 * Creates and ads a new Position object to newPositions
+	 * Creates and adds a new Position object to newPositions
 	 * 
 	 * @param x
 	 *            The x value of the current Position
@@ -476,7 +485,7 @@ public class FoxGameEngine implements AiGameEngine {
 	}
 
 	/**
-	 * Creates and ads a new Position object to newPositions
+	 * Creates and adds a new Position object to newPositions
 	 * 
 	 * @param x
 	 *            The x value of the current Position
@@ -498,7 +507,7 @@ public class FoxGameEngine implements AiGameEngine {
 	}
 
 	/**
-	 * Creates and ads a new Position object to newPositions
+	 * Creates and adds a new Position object to newPositions
 	 * 
 	 * @param x
 	 *            The x value of the current Position
@@ -508,13 +517,13 @@ public class FoxGameEngine implements AiGameEngine {
 	 *            The nr of steps to move in a direction
 	 */
 	private void newPositionDownLeft(int x, int y, int step) {
-		if (isPositionValid(x - 1, y + 1)) {
+		if (isPositionValid(x - step, y + step)) {
 			if (step == 2) {
 				if (isOccupied(new Position(x - 1, y + 1)) == 1) {
-					newPositions.add(new Position(x - 1, y + 1));
+					newPositions.add(new Position(x - step, y + step));
 				}
 			} else {
-				newPositions.add(new Position(x - 1, y + 1));
+				newPositions.add(new Position(x - step, y + step));
 			}
 		}
 	}
