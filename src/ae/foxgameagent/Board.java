@@ -106,6 +106,13 @@ public class Board {
 						changedPositions.add(newPosition);
 					} else {
 
+						// Get the x and y values of the Position jumped over
+						int x = (newPosition.x + oldPosition.x) / 2;
+						int y = (newPosition.y + oldPosition.y) / 2;
+
+						// Removes the sheep at that Position
+						sheepPositions.remove(new Position(x, y));
+
 						// If changedPositions is empty, add both new and old
 						// Positions
 						if (changedPositions.isEmpty()) {
@@ -118,7 +125,6 @@ public class Board {
 							changedPositions.add(newPosition);
 						}
 					}
-
 				}
 			}
 		}

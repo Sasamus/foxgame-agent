@@ -185,7 +185,7 @@ public class FoxGameEngine implements AiGameEngine {
 
 		// Holds a successor
 		Board successor;
-		
+
 		// Holds the fox(es) that are allowed jump
 		ArrayList<Position> foxesToJump = new ArrayList<Position>();
 
@@ -193,13 +193,13 @@ public class FoxGameEngine implements AiGameEngine {
 		if (alreadyJumpedBoard == null) {
 			// Set successor to match board
 			successor = new Board(board);
-			
+
 			// Set foxesToJump to successors foxPositions
 			foxesToJump = successor.getFoxPositions();
 		} else {
 			// Set successor to match alreadyJumpedBoard
 			successor = new Board(alreadyJumpedBoard);
-			
+
 			// Set foxesToJump to foxToJump
 			foxesToJump.add(foxToJump);
 		}
@@ -255,6 +255,7 @@ public class FoxGameEngine implements AiGameEngine {
 					newPositionUpRight(x, y, step);
 				}
 			}
+			
 			if (!jump) {
 
 				// Iterate through newPositions
@@ -265,11 +266,12 @@ public class FoxGameEngine implements AiGameEngine {
 
 						successor.changePostition(foxPosition, newPosition,
 								false);
+
 						successors.add(successor);
 					}
 				}
 			} else {
-				
+
 				System.out.println("Positions: " + newPositions.size());
 
 				// Iterate through newPositions
@@ -280,11 +282,13 @@ public class FoxGameEngine implements AiGameEngine {
 
 						successor.changePostition(foxPosition, newPosition,
 								true);
+
 						successors.add(successor);
 
 						// Call getFoxMoveSuccessors again, since several jumps
 						// are allowed
-						getFoxSuccessors(successors, successor, foxPosition, true);
+						getFoxSuccessors(successors, successor, foxPosition,
+								true);
 					}
 				}
 			}
