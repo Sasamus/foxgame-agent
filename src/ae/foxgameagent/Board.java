@@ -18,9 +18,9 @@ public class Board {
 	 * Holds the positions of the sheep
 	 */
 	private ArrayList<Position> sheepPositions = new ArrayList<Position>();
-	
+
 	/**
-	 * Holds the Positions that have changed to create the current state 
+	 * Holds the Positions that have changed to create the current state
 	 */
 	private ArrayList<Position> changedPositions = new ArrayList<Position>();
 
@@ -72,26 +72,53 @@ public class Board {
 	 * @param newPosition
 	 *            The position it shall move to
 	 */
-	public void changePostition(Position oldPosition, Position newPosition){
-		
-		// Find oldPostion in sheepPositions, if it exists, and changes it to match newPosition
-		if(sheepPositions.contains(oldPosition)){
-			for(Position position : sheepPositions){
-				if(position.equals(oldPosition)){
+	public void changePostition(Position oldPosition, Position newPosition,
+			boolean jump) {
+
+		// Find oldPostion in sheepPositions, if it exists, and changes it to
+		// match newPosition
+		if (sheepPositions.contains(oldPosition)) {
+			for (Position position : sheepPositions) {
+				if (position.equals(oldPosition)) {
 					position.x = newPosition.x;
 					position.y = newPosition.y;
+
+					// Add Positions to changedPositions
+					changedPositions.add(oldPosition);
+					changedPositions.add(newPosition);
 				}
 			}
-			
+
 			return;
 		}
-		
-		// Find oldPostion in foxPositions, if it exists, and changes it to match newPosition
-		if(foxPositions.contains(oldPosition)){
-			for(Position position : foxPositions){
-				if(position.equals(oldPosition)){
+
+		// Find oldPostion in foxPositions, if it exists, and changes it to
+		// match newPosition
+		if (foxPositions.contains(oldPosition)) {
+			for (Position position : foxPositions) {
+				if (position.equals(oldPosition)) {
 					position.x = newPosition.x;
 					position.y = newPosition.y;
+
+					if (!jump) {
+						// Add Positions to changedPositions
+						changedPositions.add(oldPosition);
+						changedPositions.add(newPosition);
+					} else {
+
+						// If changedPositions is empty, add both new and old
+						// Positions
+						if (changedPositions.isEmpty()) {
+							changedPositions.add(oldPosition);
+							changedPositions.add(newPosition);
+						} else {
+							// If it isn't add only newPosition, since the old
+							// Position is already added
+
+							changedPositions.add(newPosition);
+						}
+					}
+
 				}
 			}
 		}
@@ -135,7 +162,8 @@ public class Board {
 	}
 
 	/**
-	 * @param changedPositions the changedPositions to set
+	 * @param changedPositions
+	 *            the changedPositions to set
 	 */
 	public void setChangedPositions(ArrayList<Position> changedPositions) {
 		this.changedPositions = changedPositions;

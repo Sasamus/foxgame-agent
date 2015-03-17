@@ -152,7 +152,7 @@ public class FoxGameEngine implements AiGameEngine {
 				// Add a new Successor if the new Positions is empty
 				if (isOccupied(newPosition) == 0) {
 
-					successor.changePostition(sheepPosition, newPosition);
+					successor.changePostition(sheepPosition, newPosition, false);
 					successors.add(successor);
 				}
 			}
@@ -162,12 +162,21 @@ public class FoxGameEngine implements AiGameEngine {
 		return successors;
 	}
 
+	
 	/**
-	 * get a list of Successors for a normal fox move
+	 * Generated Successors based on Fox moves
 	 * 
-	 * @return An ArrayList holding Board objects representing the Successors
+	 * @param jump True if generating jump moves, else false
+	 * 
+	 * @return An ArrayList with Board objects
 	 */
-	private ArrayList<Board> getFoxNormalMovesSuccessors() {
+	private ArrayList<Board> getFoxMovesSuccessors(boolean jump) {
+		
+		int step = 1;
+		
+		if(jump){
+			step = 2;
+		}
 
 		// Holds the Successors
 		ArrayList<Board> successors = new ArrayList<Board>();
@@ -189,126 +198,63 @@ public class FoxGameEngine implements AiGameEngine {
 
 			// Attempt to add new Positions based on horizontal and vertical
 			// moves to newPositions
-			tryAddAllHorizontalAndVerticalNewPositions(x, y, 1);
+			tryAddAllHorizontalAndVerticalNewPositions(x, y, step);
 
 			// Attempt to add new Positions based on diagonal moves, when they
 			// can be made, to newPositions
 			if (y == 1) {
 				if (x == 3 || x == 5) {
-					newPositionDownLeft(x, y, 1);
-					newPositionDownRight(x, y, 1);
+					newPositionDownLeft(x, y, step);
+					newPositionDownRight(x, y, step);
 				}
 			} else if (y == 2 || y == 6) {
 				if (x == 4) {
-					tryAddAllDiagonalNewPositions(x, y, 1);
+					tryAddAllDiagonalNewPositions(x, y, step);
 				}
 			} else if (y == 3) {
 				if (x == 1 || x == 3 || x == 5 || x == 7) {
-					tryAddAllDiagonalNewPositions(x, y, 1);
+					tryAddAllDiagonalNewPositions(x, y, step);
 				}
 			} else if (y == 4) {
 				if (x == 2 || x == 4 || x == 6) {
-					tryAddAllDiagonalNewPositions(x, y, 1);
+					tryAddAllDiagonalNewPositions(x, y, step);
 				}
 			} else if (y == 5) {
 				if (x == 1 || x == 3 || x == 5 || x == 7) {
-					tryAddAllDiagonalNewPositions(x, y, 1);
+					tryAddAllDiagonalNewPositions(x, y, step);
 				}
 			} else if (y == 7) {
 				if (x == 3 || x == 5) {
-					newPositionUpLeft(x, y, 1);
-					newPositionUpRight(x, y, 1);
+					newPositionUpLeft(x, y, step);
+					newPositionUpRight(x, y, step);
 				}
 			}
+			if(!jump){
+				
+				// Iterate through newPositions
+				for (Position newPosition : newPositions) {
 
-			// Iterate through newPositions
-			for (Position newPosition : newPositions) {
+					// Add a new Successor if the new Positions is empty
+					if (isOccupied(newPosition) == 0) {
 
-				// Add a new Successor if the new Positions is empty
-				if (isOccupied(newPosition) == 0) {
+						successor.changePostition(foxPosition, newPosition, false);
+						successors.add(successor);
+					}
+				}
+			} else {
+				// TODO: Handle jumos
+				// Iterate through newPositions
+				for (Position newPosition : newPositions) {
 
-					successor.changePostition(foxPosition, newPosition);
-					successors.add(successor);
+					// Add a new Successor if the new Positions is empty
+					if (isOccupied(newPosition) == 0) {
+
+						successor.changePostition(foxPosition, newPosition, false);
+						successors.add(successor);
+					}
 				}
 			}
-		}
-
-		// Return successors
-		return successors;
-	}
-
-	/**
-	 * get a list of Successors for a jump fox move
-	 * 
-	 * @return An ArrayList holding Board objects representing the Successors
-	 */
-	private ArrayList<Board> getFoxJumpSuccessors() {
-
-		// TODO: This is not implemented at all --
-		// code is copied from normal moves
-
-		// Holds the Successors
-		ArrayList<Board> successors = new ArrayList<Board>();
-
-		// Holds a successor
-		Board successor;
-
-		// Iterate through foxPositions
-		for (Position foxPosition : board.getFoxPositions()) {
-
-			// Set successor to match board
-			successor = new Board(board);
-
-			// Get the x and y values of foxPosition
-			int x = foxPosition.getX();
-			int y = foxPosition.getY();
-
-			// Look for possible moves
-
-			// Attempt to add new Positions based on horizontal and vertical
-			// moves to newPositions
-			tryAddAllHorizontalAndVerticalNewPositions(x, y, 2);
-
-			// Attempt to add new Positions based on diagonal moves, when they
-			// can be made, to newPositions
-			if (y == 1) {
-				if (x == 3 || x == 5) {
-					newPositionDownLeft(x, y, 2);
-					newPositionDownRight(x, y, 2);
-				}
-			} else if (y == 2 || y == 6) {
-				if (x == 4) {
-					tryAddAllDiagonalNewPositions(x, y, 2);
-				}
-			} else if (y == 3) {
-				if (x == 1 || x == 3 || x == 5 || x == 7) {
-					tryAddAllDiagonalNewPositions(x, y, 2);
-				}
-			} else if (y == 4) {
-				if (x == 2 || x == 4 || x == 6) {
-					tryAddAllDiagonalNewPositions(x, y, 2);
-				}
-			} else if (y == 5) {
-				if (x == 1 || x == 3 || x == 5 || x == 7) {
-					tryAddAllDiagonalNewPositions(x, y, 2);
-				}
-			} else if (y == 7) {
-				if (x == 3 || x == 5) {
-					newPositionUpLeft(x, y, 2);
-					newPositionUpRight(x, y, 2);
-				}
-			}
-
-			// Iterate through newPositions
-			for (Position newPosition : newPositions) {
-
-				// Add a new Successor if the new Positions is empty
-				if (isOccupied(newPosition) == 0) {
-
-					successor.changePostition(foxPosition, newPosition);
-					successors.add(successor);
-				}
-			}
+			
 		}
 
 		// Return successors
@@ -356,7 +302,7 @@ public class FoxGameEngine implements AiGameEngine {
 		newPositionDownLeft(x, y, step);
 		newPositionDownRight(x, y, step);
 	}
-	
+
 	/**
 	 * Calls all newPosition methods for horizontal and vertical moves
 	 * 
@@ -367,9 +313,9 @@ public class FoxGameEngine implements AiGameEngine {
 	 * 
 	 * @param step
 	 *            The nr of steps to move in a direction
-	 * 
 	 */
-	private void tryAddAllHorizontalAndVerticalNewPositions(int x, int y, int step) {
+	private void tryAddAllHorizontalAndVerticalNewPositions(int x, int y,
+			int step) {
 		newPositionUp(x, y, step);
 		newPositionDown(x, y, step);
 		newPositionLeft(x, y, step);
