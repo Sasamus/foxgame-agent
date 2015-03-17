@@ -188,7 +188,6 @@ public class FoxGameEngine implements AiGameEngine {
 
 		// Acts depending on if jumps have happened
 		if (alreadyJumpedBoard == null) {
-
 			// Set successor to match board
 			successor = new Board(board);
 		} else {
@@ -198,6 +197,15 @@ public class FoxGameEngine implements AiGameEngine {
 
 		// Iterate through foxPositions
 		for (Position foxPosition : successor.getFoxPositions()) {
+
+			// Acts depending on if jumps have happened
+			if (alreadyJumpedBoard == null) {
+				// Set successor to match board
+				successor = new Board(board);
+			} else {
+				// Set successor to match alreadyJumpedBoard
+				successor = new Board(alreadyJumpedBoard);
+			}
 
 			// Get the x and y values of foxPosition
 			int x = foxPosition.getX();
