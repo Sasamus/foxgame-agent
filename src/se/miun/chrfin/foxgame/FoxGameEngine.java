@@ -152,7 +152,8 @@ public class FoxGameEngine implements AiGameEngine {
 				// Add a new Successor if the new Positions is empty
 				if (isOccupied(newPosition) == 0) {
 
-					successor.changePostition(sheepPosition, newPosition, false);
+					successor
+							.changePostition(sheepPosition, newPosition, false);
 					successors.add(successor);
 				}
 			}
@@ -162,24 +163,21 @@ public class FoxGameEngine implements AiGameEngine {
 		return successors;
 	}
 
-	
 	/**
-	 * Generated Successors based on Fox moves
+	 * Generates successors based on fox moves
 	 * 
-	 * @param jump True if generating jump moves, else false
-	 * 
-	 * @return An ArrayList with Board objects
+	 * @param successors
+	 *            An ArrayList with Board objects
+	 * @param jump
+	 *            True if generating successors for jumps, else false
 	 */
-	private ArrayList<Board> getFoxMovesSuccessors(boolean jump) {
-		
+	private void getFoxMovesSuccessors(ArrayList<Board> successors, boolean jump) {
+
 		int step = 1;
-		
-		if(jump){
+
+		if (jump) {
 			step = 2;
 		}
-
-		// Holds the Successors
-		ArrayList<Board> successors = new ArrayList<Board>();
 
 		// Holds a successor
 		Board successor;
@@ -229,15 +227,16 @@ public class FoxGameEngine implements AiGameEngine {
 					newPositionUpRight(x, y, step);
 				}
 			}
-			if(!jump){
-				
+			if (!jump) {
+
 				// Iterate through newPositions
 				for (Position newPosition : newPositions) {
 
 					// Add a new Successor if the new Positions is empty
 					if (isOccupied(newPosition) == 0) {
 
-						successor.changePostition(foxPosition, newPosition, false);
+						successor.changePostition(foxPosition, newPosition,
+								false);
 						successors.add(successor);
 					}
 				}
@@ -249,16 +248,17 @@ public class FoxGameEngine implements AiGameEngine {
 					// Add a new Successor if the new Positions is empty
 					if (isOccupied(newPosition) == 0) {
 
-						successor.changePostition(foxPosition, newPosition, false);
+						successor.changePostition(foxPosition, newPosition,
+								true);
 						successors.add(successor);
+
+						// Call getFoxMoveSuccessors again, since a jump alows
+						// for more jumps
+						getFoxMovesSuccessors(successors, true);
 					}
 				}
 			}
-			
 		}
-
-		// Return successors
-		return successors;
 	}
 
 	/**
