@@ -33,11 +33,6 @@ public class FoxGameEngine implements AiGameEngine {
 	private final String playerName = "alen1200";
 
 	/**
-	 * Holds a String representing the players role
-	 */
-	private final String playerRole;
-
-	/**
 	 * Holds the Board
 	 */
 	private Board board = new Board();
@@ -55,9 +50,6 @@ public class FoxGameEngine implements AiGameEngine {
 	 */
 	public FoxGameEngine(PlayerSetup setup) {
 
-		// Set playerRole
-		playerRole = setup.playerRole;
-
 	}
 
 	/**
@@ -69,8 +61,8 @@ public class FoxGameEngine implements AiGameEngine {
 		// Holds the Successors
 		ArrayList<Board> successors = new ArrayList<Board>();
 
-		// Acts depending on if playerRole equals FOX or SHEEP
-		if (playerRole.equals("FOX")) {
+		// Acts depending on if status.playerRole equals FOX or SHEEP
+		if (status.playerRole.equals("FOX")) {
 			getFoxSuccessors(successors, null, false);
 			getFoxSuccessors(successors, null, true);
 		} else {
@@ -188,21 +180,24 @@ public class FoxGameEngine implements AiGameEngine {
 			step = 2;
 		}
 
+		// Clear newPositions
+		newPositions.clear();
+
 		// Holds a successor
 		Board successor;
 
+		// Acts depending on if jumps have happened
+		if (alreadyJumpedBoard == null) {
+
+			// Set successor to match board
+			successor = new Board(board);
+		} else {
+			// Set successor to match alreadyJumpedBoard
+			successor = new Board(alreadyJumpedBoard);
+		}
+
 		// Iterate through foxPositions
-		for (Position foxPosition : board.getFoxPositions()) {
-
-			// Acts depending on if jumps have happened
-			if (alreadyJumpedBoard == null) {
-
-				// Set successor to match board
-				successor = new Board(board);
-			} else {
-				// Set successor to match alreadyJumpedBoard
-				successor = new Board(alreadyJumpedBoard);
-			}
+		for (Position foxPosition : successor.getFoxPositions()) {
 
 			// Get the x and y values of foxPosition
 			int x = foxPosition.getX();
@@ -354,6 +349,8 @@ public class FoxGameEngine implements AiGameEngine {
 				if (isOccupied(new Position(x, y - 1)) == 1) {
 					newPositions.add(new Position(x, y - step));
 				}
+			} else {
+				newPositions.add(new Position(x, y - step));
 			}
 		}
 	}
