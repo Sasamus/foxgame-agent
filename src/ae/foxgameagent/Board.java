@@ -18,6 +18,11 @@ public class Board {
 	 * Holds the positions of the sheep
 	 */
 	private ArrayList<Position> sheepPositions = new ArrayList<Position>();
+	
+	/**
+	 * Holds the Positions that have changed to create the current state 
+	 */
+	private ArrayList<Position> changedPositions = new ArrayList<Position>();
 
 	/**
 	 * Constructor
@@ -120,6 +125,20 @@ public class Board {
 	 */
 	public void setSheepPositions(ArrayList<Position> sheepPositions) {
 		this.sheepPositions = sheepPositions;
+	}
+
+	/**
+	 * @return the changedPositions
+	 */
+	public ArrayList<Position> getChangedPositions() {
+		return changedPositions;
+	}
+
+	/**
+	 * @param changedPositions the changedPositions to set
+	 */
+	public void setChangedPositions(ArrayList<Position> changedPositions) {
+		this.changedPositions = changedPositions;
 	}
 
 }
