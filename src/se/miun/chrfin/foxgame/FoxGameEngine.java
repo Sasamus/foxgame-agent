@@ -72,6 +72,8 @@ public class FoxGameEngine implements AiGameEngine {
 		Move move = Move.move(getBestSuccessor(successors, true)
 				.getChangedPositions());
 
+		System.out.println("Move: " + move.toString());
+
 		return move.toString();
 	}
 
@@ -290,11 +292,10 @@ public class FoxGameEngine implements AiGameEngine {
 	 * @return true if the position x, y is on the board, else false
 	 */
 	private boolean isPositionValid(int x, int y) {
-		
-		if(y < 1 || y > 7){
+
+		if (y < 1 || y > 7) {
 			return false;
-		}
-		else if (y <= 2 || y >= 6) {
+		} else if (y <= 2 || y >= 6) {
 			if (x <= 2 || x >= 6) {
 				return false;
 			}
@@ -538,7 +539,43 @@ public class FoxGameEngine implements AiGameEngine {
 
 	@Override
 	public void updateState(String move) {
-		// Implement this
+
+		// Get nr of moves in move
+		int nrOfMoves = move.length() - move.replaceAll(" ", "").length();
+
+		// Holds the x and y values
+		int startX = 0;
+		int stopX = 0;
+		int startY = 0;
+		int stopY = 0;
+
+		// Convert move to a char Array
+		char[] moveArray = move.toCharArray();
+
+		// Iterate through the moves
+		for (int i = 0; i < moveArray.length; i = i + 4) {
+			if (i == 0) {
+				stopX = Character.getNumericValue(moveArray[i]);
+				stopY = Character.getNumericValue(moveArray[i + 2]);
+			} else {
+				startX = stopX;
+				startY = stopY;
+
+				stopX = Character.getNumericValue(moveArray[i]);
+				stopY = Character.getNumericValue(moveArray[i + 2]);
+
+				if (nrOfMoves == 1) {
+
+					// System.out.println("Board updating");
+					board.updateBoard(new Position(startX, startY),
+							new Position(stopX, stopY), false);
+
+				} else {
+
+				}
+			}
+		}
+
 	}
 
 	@Override

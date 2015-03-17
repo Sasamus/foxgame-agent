@@ -125,6 +125,17 @@ public class Board {
 	}
 
 	/**
+	 * Update the board
+	 */
+	public void updateBoard(Position oldPosition, Position newPosition,
+			boolean jump) {
+
+		// Call changePosition and clear changedPositions
+		changePostition(oldPosition, newPosition, jump);
+		changedPositions.clear();
+	}
+
+	/**
 	 * @return the foxPositions
 	 */
 	public ArrayList<Position> getFoxPositions() {
