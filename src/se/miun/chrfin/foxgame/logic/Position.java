@@ -2,6 +2,7 @@ package se.miun.chrfin.foxgame.logic;
 
 /**
  * @author Christoffer Fink
+ * @author Albin Engström
  */
 public class Position {
 

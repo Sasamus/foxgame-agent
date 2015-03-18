@@ -9,7 +9,7 @@ import java.util.List;
  */
 public class Move {
 
-  private final List<Position> positions;
+  public final List<Position> positions;
 
   private Move(List<Position> positions) {
     this.positions = Collections.unmodifiableList(positions);
