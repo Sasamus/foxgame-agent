@@ -241,34 +241,33 @@ public class FoxGameEngine implements AiGameEngine {
 			// Attempt to add new Positions based on diagonal moves, when they
 			// can be made, to newPositions
 
-			// TODO: Uncomment
-			// if (y == 1) {
-			// if (x == 3 || x == 5) {
-			// newPositionDownLeft(x, y, step);
-			// newPositionDownRight(x, y, step);
-			// }
-			// } else if (y == 2 || y == 6) {
-			// if (x == 4) {
-			// tryAddAllDiagonalNewPositions(x, y, step);
-			// }
-			// } else if (y == 3) {
-			// if (x == 1 || x == 3 || x == 5 || x == 7) {
-			// tryAddAllDiagonalNewPositions(x, y, step);
-			// }
-			// } else if (y == 4) {
-			// if (x == 2 || x == 4 || x == 6) {
-			// tryAddAllDiagonalNewPositions(x, y, step);
-			// }
-			// } else if (y == 5) {
-			// if (x == 1 || x == 3 || x == 5 || x == 7) {
-			// tryAddAllDiagonalNewPositions(x, y, step);
-			// }
-			// } else if (y == 7) {
-			// if (x == 3 || x == 5) {
-			// newPositionUpLeft(x, y, step);
-			// newPositionUpRight(x, y, step);
-			// }
-			// }
+			 if (y == 1) {
+				 if (x == 3 || x == 5) {
+					 newPosition(successor, newPositions, x, y, step, "downleft");
+					 newPosition(successor, newPositions, x, y, step, "downright");
+				 }
+			 } else if (y == 2 || y == 6) {
+				 if (x == 4) {
+					 tryAddAllDiagonalNewPositions(successor, newPositions, x, y, step);
+				 }
+			 } else if (y == 3) {
+				 if (x == 1 || x == 3 || x == 5 || x == 7) {
+					 tryAddAllDiagonalNewPositions(successor, newPositions, x, y, step);
+				 }
+			 } else if (y == 4) {
+				 if (x == 2 || x == 4 || x == 6) {
+					 tryAddAllDiagonalNewPositions(successor, newPositions, x, y, step);
+				 }
+			 } else if (y == 5) {
+				 if (x == 1 || x == 3 || x == 5 || x == 7) {
+					 tryAddAllDiagonalNewPositions(successor, newPositions, x, y, step);
+				 }
+			 } else if (y == 7) {
+				 if (x == 3 || x == 5) {
+					 newPosition(successor, newPositions, x, y, step, "upleft");
+					 newPosition(successor, newPositions, x, y, step, "downleft");
+				 }
+			 }
 
 			if (!jump) {
 
@@ -338,6 +337,10 @@ public class FoxGameEngine implements AiGameEngine {
 	/**
 	 * Calls all newPosition methods for diagonal moves
 	 * 
+	 * @param theBoard
+	 *            The Board to work with
+	 * @param newPositions
+	 *            The ArrayList to add new Positions to
 	 * @param x
 	 *            The x value of the current Position
 	 * @param y
@@ -347,11 +350,13 @@ public class FoxGameEngine implements AiGameEngine {
 	 *            The nr of steps to move in a direction
 	 * 
 	 */
-	private void tryAddAllDiagonalNewPositions(int x, int y, int step) {
-		// newPositionUpLeft(x, y, step);
-		// newPositionUpRight(x, y, step);
-		// newPositionDownLeft(x, y, step);
-		// newPositionDownRight(x, y, step);
+	private void tryAddAllDiagonalNewPositions(Board theBoard,
+			ArrayList<Position> newPositions,int x, int y, int step) {
+		
+		 newPosition(theBoard, newPositions, x, y, step, "upleft");
+		 newPosition(theBoard, newPositions, x, y, step, "upright");
+		 newPosition(theBoard, newPositions, x, y, step, "downleft");
+		 newPosition(theBoard, newPositions, x, y, step, "downright");
 	}
 
 	/**
@@ -409,6 +414,18 @@ public class FoxGameEngine implements AiGameEngine {
 			xOffset = -step;
 		} else if (move.equals("right")) {
 			xOffset = +step;
+		} else if (move.equals("upleft")) {
+			xOffset = -step;
+			yOffset = -step;
+		} else if (move.equals("upright")) {
+			xOffset = +step;
+			yOffset = -step;
+		} else if (move.equals("downleft")) {
+			xOffset = -step;
+			yOffset = +step;
+		} else if (move.equals("downright")) {
+			xOffset = +step;
+			yOffset = +step;
 		}
 
 		if (isPositionValid(x + xOffset, y + yOffset)
