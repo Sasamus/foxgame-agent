@@ -63,12 +63,11 @@ public class MiniMax {
 	 *            True if looking for Max else false
 	 * @return The utility value of the best Successor
 	 */
-	@SuppressWarnings("unchecked")
 	double minMax(Board node, double alpha, double beta,
 			boolean max) {
 
 		// Check if nodes state is terminal
-		if (game.isTerminal(node.state)) {
+		if (node.isTerminal() == 1 || node.isTerminal() == 2) {
 
 			// If so, return it's utility
 			return game.getUtility(node.state);

@@ -347,29 +347,6 @@ public class FoxGameEngine implements AiGameEngine {
 	}
 
 	/**
-	 * Check if an x, y position is on the board
-	 * 
-	 * @param x
-	 *            The x value of the position
-	 * @param y
-	 *            The y value of the position
-	 * @return true if the position x, y is on the board, else false
-	 */
-	private boolean isPositionValid(int x, int y) {
-
-		if (y < 1 || y > 7) {
-			return false;
-		} else if (y <= 2 || y >= 6) {
-			if (x <= 2 || x >= 6) {
-				return false;
-			}
-		} else if (x < 1 || x > 7) {
-			return false;
-		}
-		return true;
-	}
-
-	/**
 	 * Calls all newPosition methods for diagonal moves
 	 * 
 	 * @param theBoard
@@ -463,8 +440,8 @@ public class FoxGameEngine implements AiGameEngine {
 			yOffset = +step;
 		}
 
-		if (isPositionValid(x + xOffset, y + yOffset)
-				&& (isOccupied(theBoard, new Position(x + xOffset, y + yOffset)) == 0)) {
+		if (board.isPositionValid(x + xOffset, y + yOffset)
+				&& (theBoard.isOccupied(new Position(x + xOffset, y + yOffset)) == 0)) {
 			if (step == 2) {
 
 				// System.out.println("isOccupied Org: " + x + ":" + y + ":"
@@ -484,7 +461,7 @@ public class FoxGameEngine implements AiGameEngine {
 				// + isOccupied(theBoard, new Position(x + xOffset, y
 				// + yOffset)));
 
-				if (isOccupied(theBoard, new Position(x + (xOffset / 2), y
+				if (theBoard.isOccupied(new Position(x + (xOffset / 2), y
 						+ (yOffset / 2))) == 1) {
 					newPositions.add(new Position(x + xOffset, y + yOffset));
 				}
@@ -493,27 +470,6 @@ public class FoxGameEngine implements AiGameEngine {
 			}
 		}
 
-	}
-
-	/**
-	 * Check if a position is occupied, and by what
-	 * 
-	 * 
-	 * @param theBoard
-	 *            The Board to check on
-	 * @param position
-	 *            The Position to check
-	 * @return 0 if free, 1 if sheep, 2 if fox
-	 */
-	private int isOccupied(Board theBoard, Position position) {
-
-		// Check if something is in position and return an int depending on what
-		if (theBoard.getFoxPositions().contains(position)) {
-			return 2;
-		} else if (theBoard.getSheepPositions().contains(position)) {
-			return 1;
-		}
-		return 0;
 	}
 
 	@Override

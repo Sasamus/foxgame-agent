@@ -63,14 +63,94 @@ public class Board {
 			foxPositions.add(new Position(position));
 		}
 	}
-	
+
+	/**
+	 * Check if Board is in a terminal state, if so, who won?
+	 * 
+	 * @return 1 of
+	 */
+	public int isTerminal() {
+
+		// If there are no foxes left, the Sheep won, return 1
+		if (foxPositions.isEmpty()) {
+			return 1;
+		}
+
+		// If there aren't enough sheep to fill the pen, the foxes won, return 2
+		if (sheepPositions.size() < 9) {
+			return 2;
+		}
+
+		// Holds if the pen is full
+		boolean penFull = true;
+
+		// Check if the pen is full, penFull will be false if it isn't
+		for (int x = 3; x <= 5; x++) {
+			for (int y = 1; y <= 3; y++) {
+				if (isOccupied(new Position(x, y)) == 0) {
+					penFull = false;
+				}
+			}
+		}
+
+		// The pen is full, Sheep won, return 1
+		if (penFull) {
+			return 1;
+		}
+
+		// Return 0, state isn't terminal
+		return 0;
+	}
+
+	/**
+	 * Check if an x, y position is on the board
+	 * 
+	 * @param x
+	 *            The x value of the position
+	 * @param y
+	 *            The y value of the position
+	 * @return true if the position x, y is on the board, else false
+	 */
+	public boolean isPositionValid(int x, int y) {
+
+		if (y < 1 || y > 7) {
+			return false;
+		} else if (y <= 2 || y >= 6) {
+			if (x <= 2 || x >= 6) {
+				return false;
+			}
+		} else if (x < 1 || x > 7) {
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * Check if a position is occupied, and by what
+	 * 
+	 * @param position
+	 *            The Position to check
+	 * @return 0 if free, 1 if sheep, 2 if fox
+	 */
+	public int isOccupied(Position position) {
+
+		// Check if something is in position and return an int depending on what
+		if (getFoxPositions().contains(position)) {
+			return 2;
+		} else if (getSheepPositions().contains(position)) {
+			return 1;
+		}
+		return 0;
+	}
+
 	/**
 	 * Remove a fox from the board
 	 * 
-	 * @param position The Position of the fox
+	 * @param position
+	 *            The Position of the fox
 	 */
-	public void removeFox(Position position){
-		
+	public void removeFox(Position position) {
+
 		// Remove it if it exists
 		if (foxPositions.contains(position)) {
 			foxPositions.remove(position);
