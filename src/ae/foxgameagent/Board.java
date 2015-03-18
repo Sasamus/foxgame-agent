@@ -103,6 +103,32 @@ public class Board {
 	}
 
 	/**
+	 * Get the utility value of the current state
+	 * 
+	 * @return The utility value
+	 */
+	public int getUtility() {
+
+		// TODO: Makes this better, currently rather shit
+
+		// Holds the utility value
+		int value = 0;
+
+		// Iterate through sheepPositions
+		for (Position position : getSheepPositions()) {
+
+			// Add positions distance from the top to value
+			value = value + position.y;
+		}
+
+		// Divide value by the nr of sheep
+		value = value / getSheepPositions().size();
+
+		// Return value
+		return value;
+	}
+
+	/**
 	 * Check if an x, y position is on the board
 	 * 
 	 * @param x

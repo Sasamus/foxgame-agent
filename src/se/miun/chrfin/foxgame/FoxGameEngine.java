@@ -20,6 +20,10 @@ public class FoxGameEngine implements AiGameEngine {
 	// TODO: Generate successors once --
 	// possibly in the constructor, and store
 	// them instead of making new ones every time.
+	
+	// TODO: Possibly separate this into more classes
+
+	// TODO: Implement minimax
 
 	// TODO: Account for time
 
@@ -94,9 +98,7 @@ public class FoxGameEngine implements AiGameEngine {
 	 */
 	private Board getBestSuccessor(ArrayList<Board> successors, boolean fox) {
 
-		// TODO: Implement this
-
-		return successors.get(0);
+		
 	}
 
 	/**
@@ -122,11 +124,11 @@ public class FoxGameEngine implements AiGameEngine {
 			int x = sheepPosition.getX();
 			int y = sheepPosition.getY();
 
-			// Look for possible moves
+			// TODO: Uncomment, adapt to work, -- 
+			// things have changes since it went into hiding
 
 			// Attempt to add new Positions based on horizontal and vertical
 			// moves to newPositions
-			// TODO: Uncomment
 			// newPositionRight(x, y, 1);
 			// newPositionUp(x, y, 1);
 			// newPositionLeft(x, y, 1);
