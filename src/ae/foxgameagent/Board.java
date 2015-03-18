@@ -63,6 +63,19 @@ public class Board {
 			foxPositions.add(new Position(position));
 		}
 	}
+	
+	/**
+	 * Remove a fox from the board
+	 * 
+	 * @param position The Position of the fox
+	 */
+	public void removeFox(Position position){
+		
+		// Remove it if it exists
+		if (foxPositions.contains(position)) {
+			foxPositions.remove(position);
+		}
+	}
 
 	/**
 	 * Changes the position of an sheep or fox

@@ -23,10 +23,6 @@ public class FoxGameEngine implements AiGameEngine {
 
 	// TODO: Get a move
 
-	// TODO: Less newPosition methods, way to much duplicated code right now
-
-	// TODO: Do check if a new Position in empty in the newPosition methods
-
 	// TODO: Make sure Successors are generated properly --
 	// and that all that can be are
 
@@ -60,13 +56,16 @@ public class FoxGameEngine implements AiGameEngine {
 		// Holds the Successors
 		ArrayList<Board> successors = new ArrayList<Board>();
 
+		// Holds foxes to remove
+		ArrayList<Position> foxesThatHaveMoves = new ArrayList<Position>();
+
 		// Holds a Move
 		Move move;
 
 		// Acts depending on if status.playerRole equals FOX or SHEEP
 		if (status.playerRole.equals("FOX")) {
-			getFoxSuccessors(successors, null, null, false);
-			getFoxSuccessors(successors, null, null, true);
+			getFoxSuccessors(successors, null, foxesThatHaveMoves, null, false);
+			getFoxSuccessors(successors, null, foxesThatHaveMoves, null, true);
 
 			move = Move.move(getBestSuccessor(successors, true)
 					.getChangedPositions());
@@ -168,16 +167,23 @@ public class FoxGameEngine implements AiGameEngine {
 	}
 
 	/**
-	 * Generates successors based on fox moves
+	 * Generate Successors based on fox moves
 	 * 
 	 * @param successors
-	 *            An ArrayList with Board objects
+	 *            The List to add Successors to
+	 * @param alreadyJumpedBoard
+	 *            The board state if one or more jumps have already happened
+	 * @param foxesThatHaveMoves
+	 *            A List of foxes that have moves they can do
+	 * @param foxToJump
+	 *            The fox that are allowed to jump again
 	 * @param jump
-	 *            True if generating successors for jumps, else false
+	 *            If jumps are happening
 	 */
 	private void getFoxSuccessors(ArrayList<Board> successors,
-			Board alreadyJumpedBoard, Position foxToJump, boolean jump) {
-		
+			Board alreadyJumpedBoard, ArrayList<Position> foxesThatHaveMoves,
+			Position foxToJump, boolean jump) {
+
 		System.out.println("New call----------------------------");
 
 		// The nr of steps to move
@@ -214,7 +220,7 @@ public class FoxGameEngine implements AiGameEngine {
 
 		// Iterate through foxPositions
 		for (Position foxPosition : foxesToMove) {
-			
+
 			// Clear newPositions
 			newPositions.clear();
 
@@ -231,8 +237,6 @@ public class FoxGameEngine implements AiGameEngine {
 			int x = foxPosition.getX();
 			int y = foxPosition.getY();
 
-			// Look for possible moves
-
 			// Attempt to add new Positions based on horizontal and vertical
 			// moves to newPositions
 			tryAddAllHorizontalAndVerticalNewPositions(successor, newPositions,
@@ -241,34 +245,47 @@ public class FoxGameEngine implements AiGameEngine {
 			// Attempt to add new Positions based on diagonal moves, when they
 			// can be made, to newPositions
 
-			 if (y == 1) {
-				 if (x == 3 || x == 5) {
-					 newPosition(successor, newPositions, x, y, step, "downleft");
-					 newPosition(successor, newPositions, x, y, step, "downright");
-				 }
-			 } else if (y == 2 || y == 6) {
-				 if (x == 4) {
-					 tryAddAllDiagonalNewPositions(successor, newPositions, x, y, step);
-				 }
-			 } else if (y == 3) {
-				 if (x == 1 || x == 3 || x == 5 || x == 7) {
-					 tryAddAllDiagonalNewPositions(successor, newPositions, x, y, step);
-				 }
-			 } else if (y == 4) {
-				 if (x == 2 || x == 4 || x == 6) {
-					 tryAddAllDiagonalNewPositions(successor, newPositions, x, y, step);
-				 }
-			 } else if (y == 5) {
-				 if (x == 1 || x == 3 || x == 5 || x == 7) {
-					 tryAddAllDiagonalNewPositions(successor, newPositions, x, y, step);
-				 }
-			 } else if (y == 7) {
-				 if (x == 3 || x == 5) {
-					 newPosition(successor, newPositions, x, y, step, "upleft");
-					 newPosition(successor, newPositions, x, y, step, "downleft");
-				 }
-			 }
+			if (y == 1) {
+				if (x == 3 || x == 5) {
+					newPosition(successor, newPositions, x, y, step, "downleft");
+					newPosition(successor, newPositions, x, y, step,
+							"downright");
+				}
+			} else if (y == 2 || y == 6) {
+				if (x == 4) {
+					tryAddAllDiagonalNewPositions(successor, newPositions, x,
+							y, step);
+				}
+			} else if (y == 3) {
+				if (x == 1 || x == 3 || x == 5 || x == 7) {
+					tryAddAllDiagonalNewPositions(successor, newPositions, x,
+							y, step);
+				}
+			} else if (y == 4) {
+				if (x == 2 || x == 4 || x == 6) {
+					tryAddAllDiagonalNewPositions(successor, newPositions, x,
+							y, step);
+				}
+			} else if (y == 5) {
+				if (x == 1 || x == 3 || x == 5 || x == 7) {
+					tryAddAllDiagonalNewPositions(successor, newPositions, x,
+							y, step);
+				}
+			} else if (y == 7) {
+				if (x == 3 || x == 5) {
+					newPosition(successor, newPositions, x, y, step, "upleft");
+					newPosition(successor, newPositions, x, y, step, "downleft");
+				}
+			}
 
+			// If newPositions is not empty
+			if (!newPositions.isEmpty()) {
+
+				// Note that foxPosition have moves it can do
+				foxesThatHaveMoves.add(foxPosition);
+			}
+
+			// Act depending on if jumping or not
 			if (!jump) {
 
 				// Iterate through newPositions
@@ -282,12 +299,14 @@ public class FoxGameEngine implements AiGameEngine {
 			} else {
 
 				System.out.println("Positions: " + newPositions.size());
-				
-				Board tmpSuccessor; 
+
+				// Holds a temporary Successor
+				Board tmpSuccessor;
 
 				// Iterate through newPositions
 				for (Position newPosition : newPositions) {
-					
+
+					// Set tmpSuccessor to match successor
 					tmpSuccessor = new Board(successor);
 
 					System.out.println("The new position: " + newPosition.x
@@ -305,7 +324,19 @@ public class FoxGameEngine implements AiGameEngine {
 					// Call getFoxMoveSuccessors again, since several jumps
 					// are allowed
 					getFoxSuccessors(successors, tmpSuccessor,
-							new Position(newPosition.x, newPosition.y), true);
+							foxesThatHaveMoves, new Position(newPosition.x,
+									newPosition.y), true);
+				}
+			}
+
+			// If we are at the second call of the method
+			if (step == 2) {
+
+				// If foxPosition isn't in foxesThatHaveMoves
+				if (!foxesThatHaveMoves.contains(foxPosition)) {
+
+					// Remove foxPosition from board
+					board.removeFox(foxPosition);
 				}
 			}
 		}
@@ -351,12 +382,12 @@ public class FoxGameEngine implements AiGameEngine {
 	 * 
 	 */
 	private void tryAddAllDiagonalNewPositions(Board theBoard,
-			ArrayList<Position> newPositions,int x, int y, int step) {
-		
-		 newPosition(theBoard, newPositions, x, y, step, "upleft");
-		 newPosition(theBoard, newPositions, x, y, step, "upright");
-		 newPosition(theBoard, newPositions, x, y, step, "downleft");
-		 newPosition(theBoard, newPositions, x, y, step, "downright");
+			ArrayList<Position> newPositions, int x, int y, int step) {
+
+		newPosition(theBoard, newPositions, x, y, step, "upleft");
+		newPosition(theBoard, newPositions, x, y, step, "upright");
+		newPosition(theBoard, newPositions, x, y, step, "downleft");
+		newPosition(theBoard, newPositions, x, y, step, "downright");
 	}
 
 	/**
@@ -431,10 +462,24 @@ public class FoxGameEngine implements AiGameEngine {
 		if (isPositionValid(x + xOffset, y + yOffset)
 				&& (isOccupied(theBoard, new Position(x + xOffset, y + yOffset)) == 0)) {
 			if (step == 2) {
-				
-				System.out.println("isOccupied Org: " + x + ":" + y + ":" + isOccupied(theBoard, new Position(x, y)));
-				System.out.println("isOccupied Middle: "+ (x + (xOffset / 2)) + ":" + (y + (yOffset / 2)) + ":" + isOccupied(theBoard, new Position(x + (xOffset / 2), y + (yOffset / 2))));
-				System.out.println("isOccupied New: " + (x + xOffset) + ":" + (y + yOffset) + ":" + isOccupied(theBoard, new Position(x + xOffset, y + yOffset)));
+
+				System.out.println("isOccupied Org: " + x + ":" + y + ":"
+						+ isOccupied(theBoard, new Position(x, y)));
+				System.out.println("isOccupied Middle: "
+						+ (x + (xOffset / 2))
+						+ ":"
+						+ (y + (yOffset / 2))
+						+ ":"
+						+ isOccupied(theBoard, new Position(x + (xOffset / 2),
+								y + (yOffset / 2))));
+				System.out.println("isOccupied New: "
+						+ (x + xOffset)
+						+ ":"
+						+ (y + yOffset)
+						+ ":"
+						+ isOccupied(theBoard, new Position(x + xOffset, y
+								+ yOffset)));
+
 				if (isOccupied(theBoard, new Position(x + (xOffset / 2), y
 						+ (yOffset / 2))) == 1) {
 					newPositions.add(new Position(x + xOffset, y + yOffset));
