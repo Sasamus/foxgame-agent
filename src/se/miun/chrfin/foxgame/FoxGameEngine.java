@@ -114,31 +114,23 @@ public class FoxGameEngine implements AiGameEngine {
 	}
 	
 	/**
-	 * get and Action for Game in a State
+	 * Gets the best Successor
 	 * 
-	 * @param game
-	 *            The Game
-	 * @param state
-	 *            The State
-	 * @return the Action
+	 * @param successors
+	 *            The Successors available
+	 * @param fox
+	 *            True if a fox move, false if a sheep move
 	 */
-	public Action getAction(Game<State, Action> game, State state) {
-
-		// Sets game to game
-		this.game = game;
+	public Board getBestSuccessor(ArrayList<Board> successors, boolean fox) {
 
 		// Holds the best value
 		double bestValue = Double.NEGATIVE_INFINITY;
 
 		// Holds the best Successor
-		Successor<State, Action> bestSuccessor = null;
-
-		// Get a List of successors from game
-		ArrayList<Successor<State, Action>> successors = (ArrayList<Successor<State, Action>>) game
-				.getSuccessors(state);
+		Board bestSuccessor = null;
 
 		// Iterate through successors
-		for (Successor<State, Action> tmpSuccessor : successors) {
+		for (Board tmpSuccessor : successors) {
 
 			// Get alpha
 			double alpha = minMax(tmpSuccessor, bestValue,
@@ -148,7 +140,7 @@ public class FoxGameEngine implements AiGameEngine {
 			// null
 			if (alpha > bestValue || bestSuccessor == null) {
 
-				// Set bestSuccessor tp tmpSuccessor
+				// Set bestSuccessor to tmpSuccessor
 				bestSuccessor = tmpSuccessor;
 
 				// Set bestValue to alpha
@@ -156,8 +148,8 @@ public class FoxGameEngine implements AiGameEngine {
 			}
 		}
 
-		// Return bestSuccessors action
-		return bestSuccessor.action;
+		// Return bestSuccessor
+		return bestSuccessor;
 	}
 
 	/**
@@ -174,14 +166,14 @@ public class FoxGameEngine implements AiGameEngine {
 	 * @return The utility value of the best Successor
 	 */
 	@SuppressWarnings("unchecked")
-	double minMax(Successor<State, Action> node, double alpha, double beta,
+	double minMax(Board node, double alpha, double beta,
 			boolean max) {
 
 		// Check if nodes state is terminal
-		if (game.isTerminal(node.state)) {
+		if (node.isTerminal() == 1 || node.isTerminal() == 2) {
 
 			// If so, return it's utility
-			return game.getUtility(node.state);
+			return node.getUtility();
 		}
 
 		// Check if max is true
@@ -190,9 +182,11 @@ public class FoxGameEngine implements AiGameEngine {
 			// Create and set newAlpha
 			double newAlpha = Double.NEGATIVE_INFINITY;
 
-			// Get a List of successors from game
-			ArrayList<Successor<State, Action>> successors = (ArrayList<Successor<State, Action>>) game
-					.getSuccessors(node.state);
+			// Holds the Successors
+			ArrayList<Board> successors;
+			
+			// Get the Fox Successors
+			getFoxSuccessors(successors, alreadyJumpedBoard, foxesThatHaveMoves, foxToJump, jump);
 
 			// Iterate through successors
 			for (Successor<State, Action> tmpSuccessor : successors) {
