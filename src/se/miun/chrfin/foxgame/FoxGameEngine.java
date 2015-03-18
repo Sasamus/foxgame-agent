@@ -42,11 +42,6 @@ public class FoxGameEngine implements AiGameEngine {
 	private Board board = new Board();
 
 	/**
-	 * Holds the new Positions
-	 */
-	ArrayList<Position> newPositions = new ArrayList<Position>();
-
-	/**
 	 * Constructor
 	 * 
 	 * @param setup
@@ -110,6 +105,9 @@ public class FoxGameEngine implements AiGameEngine {
 
 		// Holds a successor
 		Board successor;
+
+		// Holds the new Positions
+		ArrayList<Position> newPositions = new ArrayList<Position>();
 
 		// Iterate through sheepPositions
 		for (Position sheepPosition : board.getSheepPositions()) {
@@ -179,6 +177,8 @@ public class FoxGameEngine implements AiGameEngine {
 	 */
 	private void getFoxSuccessors(ArrayList<Board> successors,
 			Board alreadyJumpedBoard, Position foxToJump, boolean jump) {
+		
+		System.out.println("New call----------------------------");
 
 		// The nr of steps to move
 		int step = 1;
@@ -188,8 +188,8 @@ public class FoxGameEngine implements AiGameEngine {
 			step = 2;
 		}
 
-		// Clear newPositions
-		newPositions.clear();
+		// Holds the new Positions
+		ArrayList<Position> newPositions = new ArrayList<Position>();
 
 		// Holds a successor
 		Board successor;
@@ -214,6 +214,9 @@ public class FoxGameEngine implements AiGameEngine {
 
 		// Iterate through foxPositions
 		for (Position foxPosition : foxesToMove) {
+			
+			// Clear newPositions
+			newPositions.clear();
 
 			// Acts depending on if jumps have happened
 			if (alreadyJumpedBoard == null) {
@@ -221,7 +224,7 @@ public class FoxGameEngine implements AiGameEngine {
 				successor = new Board(board);
 			} else {
 				// Set successor to match alreadyJumpedBoard
-				successor = new Board(alreadyJumpedBoard);
+				successor = alreadyJumpedBoard;
 			}
 
 			// Get the x and y values of foxPosition
@@ -232,7 +235,8 @@ public class FoxGameEngine implements AiGameEngine {
 
 			// Attempt to add new Positions based on horizontal and vertical
 			// moves to newPositions
-			tryAddAllHorizontalAndVerticalNewPositions(successor, x, y, step);
+			tryAddAllHorizontalAndVerticalNewPositions(successor, newPositions,
+					x, y, step);
 
 			// Attempt to add new Positions based on diagonal moves, when they
 			// can be made, to newPositions
@@ -279,18 +283,29 @@ public class FoxGameEngine implements AiGameEngine {
 			} else {
 
 				System.out.println("Positions: " + newPositions.size());
+				
+				Board tmpSuccessor; 
 
 				// Iterate through newPositions
 				for (Position newPosition : newPositions) {
+					
+					tmpSuccessor = new Board(successor);
 
-					successor.changePostition(new Position(foxPosition),
+					System.out.println("The new position: " + newPosition.x
+							+ ":" + newPosition.y);
+
+					System.out.println("Before: "
+							+ tmpSuccessor.getSheepPositions().size());
+					tmpSuccessor.changePostition(new Position(foxPosition),
 							new Position(newPosition), true);
+					System.out.println("After: "
+							+ tmpSuccessor.getSheepPositions().size());
 
-					successors.add(successor);
+					successors.add(tmpSuccessor);
 
 					// Call getFoxMoveSuccessors again, since several jumps
 					// are allowed
-					getFoxSuccessors(successors, new Board(successor),
+					getFoxSuccessors(successors, tmpSuccessor,
 							new Position(newPosition.x, newPosition.y), true);
 				}
 			}
@@ -344,6 +359,8 @@ public class FoxGameEngine implements AiGameEngine {
 	 * 
 	 * @param theBoard
 	 *            The Board to work with
+	 * @param newPositions
+	 *            The ArrayList to add new Positions to
 	 * @param x
 	 *            The x value of the current Position
 	 * @param y
@@ -353,15 +370,32 @@ public class FoxGameEngine implements AiGameEngine {
 	 *            The nr of steps to move in a direction
 	 */
 	private void tryAddAllHorizontalAndVerticalNewPositions(Board theBoard,
-			int x, int y, int step) {
+			ArrayList<Position> newPositions, int x, int y, int step) {
 
-		newPosition(theBoard, x, y, step, "up");
-		newPosition(theBoard, x, y, step, "down");
-		newPosition(theBoard, x, y, step, "left");
-		newPosition(theBoard, x, y, step, "right");
+		newPosition(theBoard, newPositions, x, y, step, "up");
+		newPosition(theBoard, newPositions, x, y, step, "down");
+		newPosition(theBoard, newPositions, x, y, step, "left");
+		newPosition(theBoard, newPositions, x, y, step, "right");
 	}
 
-	private void newPosition(Board theBoard, int x, int y, int step, String move) {
+	/**
+	 * Adds a new Position if it's valid
+	 * 
+	 * @param theBoard
+	 *            The Board to work with
+	 * @param newPositions
+	 *            The ArrayList to add new Positions to
+	 * @param x
+	 *            The current x value
+	 * @param y
+	 *            The current y value
+	 * @param step
+	 *            The steps to move
+	 * @param move
+	 *            The move to make
+	 */
+	private void newPosition(Board theBoard, ArrayList<Position> newPositions,
+			int x, int y, int step, String move) {
 
 		int xOffset = 0;
 		int yOffset = 0;
@@ -380,6 +414,10 @@ public class FoxGameEngine implements AiGameEngine {
 		if (isPositionValid(x + xOffset, y + yOffset)
 				&& (isOccupied(theBoard, new Position(x + xOffset, y + yOffset)) == 0)) {
 			if (step == 2) {
+				
+				System.out.println("isOccupied Org: " + x + ":" + y + ":" + isOccupied(theBoard, new Position(x, y)));
+				System.out.println("isOccupied Middle: "+ (x + (xOffset / 2)) + ":" + (y + (yOffset / 2)) + ":" + isOccupied(theBoard, new Position(x + (xOffset / 2), y + (yOffset / 2))));
+				System.out.println("isOccupied New: " + (x + xOffset) + ":" + (y + yOffset) + ":" + isOccupied(theBoard, new Position(x + xOffset, y + yOffset)));
 				if (isOccupied(theBoard, new Position(x + (xOffset / 2), y
 						+ (yOffset / 2))) == 1) {
 					newPositions.add(new Position(x + xOffset, y + yOffset));
@@ -390,190 +428,6 @@ public class FoxGameEngine implements AiGameEngine {
 		}
 
 	}
-
-	// /**
-	// * Creates and adds a new Position object to newPositions
-	// *
-	// * @param x
-	// * The x value of the current Position
-	// * @param y
-	// * The y value of the current Position
-	// * @param jump
-	// * true if the move is a jump, else false
-	// */
-	// private void newPositionUp(int x, int y, int step) {
-	// if (isPositionValid(x, y - step)
-	// && (isOccupied(new Position(x, y - step)) == 0)) {
-	// if (step == 2) {
-	// if (isOccupied(new Position(x, y - 1)) == 1) {
-	// newPositions.add(new Position(x, y - step));
-	// }
-	// } else {
-	// newPositions.add(new Position(x, y - step));
-	// }
-	// }
-	// }
-	//
-	// /**
-	// * Creates and adds a new Position object to newPositions
-	// *
-	// * @param x
-	// * The x value of the current Position
-	// * @param y
-	// * The y value of the current Position
-	// * @param step
-	// * The nr of steps to move in a direction
-	// */
-	// private void newPositionDown(int x, int y, int step) {
-	// if (isPositionValid(x, y + step)
-	// && (isOccupied(new Position(x, y + step)) == 0)) {
-	// if (step == 2) {
-	// if (isOccupied(new Position(x, y + 1)) == 1) {
-	// newPositions.add(new Position(x, y + step));
-	// }
-	// } else {
-	// newPositions.add(new Position(x, y + step));
-	// }
-	// }
-	// }
-	//
-	// /**
-	// * Creates and adds a new Position object to newPositions
-	// *
-	// * @param x
-	// * The x value of the current Position
-	// * @param y
-	// * The y value of the current Position
-	// * @param step
-	// * The nr of steps to move in a direction
-	// */
-	// private void newPositionLeft(int x, int y, int step) {
-	// if (isPositionValid(x - step, y)
-	// && (isOccupied(new Position(x - step, y)) == 0)) {
-	// if (step == 2) {
-	// if (isOccupied(new Position(x - 1, y)) == 1) {
-	// newPositions.add(new Position(x - step, y));
-	// }
-	// } else {
-	// newPositions.add(new Position(x - step, y));
-	// }
-	// }
-	// }
-	//
-	// /**
-	// * Creates and adds a new Position object to newPositions
-	// *
-	// * @param x
-	// * The x value of the current Position
-	// * @param y
-	// * The y value of the current Position
-	// * @param step
-	// * The nr of steps to move in a direction
-	// */
-	// private void newPositionRight(int x, int y, int step) {
-	// if (isPositionValid(x + step, y)
-	// && (isOccupied(new Position(x + step, y)) == 0)) {
-	// if (step == 2) {
-	// if (isOccupied(new Position(x + 1, y)) == 1) {
-	// newPositions.add(new Position(x + step, y));
-	// }
-	// } else {
-	// newPositions.add(new Position(x + step, y));
-	// }
-	// }
-	// }
-	//
-	// /**
-	// * Creates and adds a new Position object to newPositions
-	// *
-	// * @param x
-	// * The x value of the current Position
-	// * @param y
-	// * The y value of the current Position
-	// * @param step
-	// * The nr of steps to move in a direction
-	// */
-	// private void newPositionUpRight(int x, int y, int step) {
-	// if (isPositionValid(x + step, y - step)
-	// && (isOccupied(new Position(x + step, y - step)) == 0)) {
-	// if (step == 2) {
-	// if (isOccupied(new Position(x + 1, y - 1)) == 1) {
-	// newPositions.add(new Position(x + step, y - step));
-	// }
-	// } else {
-	// newPositions.add(new Position(x + step, y - step));
-	// }
-	// }
-	// }
-	//
-	// /**
-	// * Creates and adds a new Position object to newPositions
-	// *
-	// * @param x
-	// * The x value of the current Position
-	// * @param y
-	// * The y value of the current Position
-	// * @param step
-	// * The nr of steps to move in a direction
-	// */
-	// private void newPositionDownRight(int x, int y, int step) {
-	// if (isPositionValid(x + step, y + step)
-	// && (isOccupied(new Position(x + step, y + step)) == 0)) {
-	// if (step == 2) {
-	// if (isOccupied(new Position(x + 1, y + 1)) == 1) {
-	// newPositions.add(new Position(x + step, y + step));
-	// }
-	// } else {
-	// newPositions.add(new Position(x + step, y + step));
-	// }
-	// }
-	// }
-	//
-	// /**
-	// * Creates and adds a new Position object to newPositions
-	// *
-	// * @param x
-	// * The x value of the current Position
-	// * @param y
-	// * The y value of the current Position
-	// * @param step
-	// * The nr of steps to move in a direction
-	// */
-	// private void newPositionUpLeft(int x, int y, int step) {
-	// if (isPositionValid(x - step, y - step)
-	// && (isOccupied(new Position(x - step, y - step)) == 0)) {
-	// if (step == 2) {
-	// if (isOccupied(new Position(x - 1, y - 1)) == 1) {
-	// newPositions.add(new Position(x - step, y - step));
-	// }
-	// } else {
-	// newPositions.add(new Position(x - step, y - step));
-	// }
-	// }
-	// }
-	//
-	// /**
-	// * Creates and adds a new Position object to newPositions
-	// *
-	// * @param x
-	// * The x value of the current Position
-	// * @param y
-	// * The y value of the current Position
-	// * @param step
-	// * The nr of steps to move in a direction
-	// */
-	// private void newPositionDownLeft(int x, int y, int step) {
-	// if (isPositionValid(x - step, y + step)
-	// && (isOccupied(new Position(x - step, y + step)) == 0)) {
-	// if (step == 2) {
-	// if (isOccupied(new Position(x - 1, y + 1)) == 1) {
-	// newPositions.add(new Position(x - step, y + step));
-	// }
-	// } else {
-	// newPositions.add(new Position(x - step, y + step));
-	// }
-	// }
-	// }
 
 	/**
 	 * Check if a position is occupied, and by what
