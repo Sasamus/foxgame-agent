@@ -79,7 +79,7 @@ public class FoxGameEngine implements AiGameEngine {
 					.getChangedPositions());
 		}
 
-		System.out.println("Move made: " + move.toString());
+		// System.out.println("Move made: " + move.toString());
 
 		return move.toString();
 	}
