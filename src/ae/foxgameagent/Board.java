@@ -62,8 +62,9 @@ public class Board {
 		for (Position position : board.getFoxPositions()) {
 			foxPositions.add(new Position(position));
 		}
-		
-		// Fill changedPositions with new Positions with the same values as the ones
+
+		// Fill changedPositions with new Positions with the same values as the
+		// ones
 		// in board
 		for (Position position : board.getChangedPositions()) {
 			changedPositions.add(new Position(position));
@@ -265,6 +266,13 @@ public class Board {
 
 		// Call changePosition and clear changedPositions
 		changePostition(oldPosition, newPosition, jump);
+		clearChangedPositions();
+	}
+
+	/**
+	 * Clear changedPositions
+	 */
+	public void clearChangedPositions() {
 		changedPositions.clear();
 	}
 

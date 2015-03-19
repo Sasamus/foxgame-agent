@@ -207,10 +207,10 @@ public class FoxGameEngine implements AiGameEngine {
 			ArrayList<Position> foxesThatHaveMoves = new ArrayList<Position>();
 
 			// Get the Fox Successors
-			getFoxSuccessors(successors, node, null, foxesThatHaveMoves, null,
-					false);
-			getFoxSuccessors(successors, node, null, foxesThatHaveMoves, null,
-					true);
+			getFoxSuccessors(successors, new Board(node), null,
+					foxesThatHaveMoves, null, false);
+			getFoxSuccessors(successors, new Board(node), null,
+					foxesThatHaveMoves, null, true);
 
 			// Iterate through successors
 			for (Board tmpSuccessor : successors) {
@@ -242,7 +242,7 @@ public class FoxGameEngine implements AiGameEngine {
 			ArrayList<Board> successors = new ArrayList<Board>();
 
 			// Get the Sheep Successors
-			getSheepSuccessors(successors, node);
+			getSheepSuccessors(successors, new Board(node));
 
 			// Iterate through successors
 			for (Board tmpSuccessor : successors) {
@@ -289,8 +289,11 @@ public class FoxGameEngine implements AiGameEngine {
 		// Iterate through sheepPositions
 		for (Position sheepPosition : node.getSheepPositions()) {
 
-			// Set successor to match node
+			// Set successor to node
 			successor = new Board(node);
+
+			// Clear changedPositions
+			successor.clearChangedPositions();
 
 			// Get the x and y values of foxPosition
 			int x = sheepPosition.getX();
@@ -380,8 +383,11 @@ public class FoxGameEngine implements AiGameEngine {
 
 		// Acts depending on if jumps have happened
 		if (alreadyJumpedBoard == null) {
-			// Set successor to match node
+			// Set successor to node
 			successor = new Board(node);
+
+			// Clear changedPositions
+			successor.clearChangedPositions();
 
 			// Set foxesToJump to successors foxPositions
 			foxesToMove = successor.getFoxPositions();
@@ -401,8 +407,11 @@ public class FoxGameEngine implements AiGameEngine {
 
 			// Acts depending on if jumps have happened
 			if (alreadyJumpedBoard == null) {
-				// Set successor to match node
+				// Set successor to node
 				successor = new Board(node);
+
+				// Clear changedPositions
+				successor.clearChangedPositions();
 			} else {
 				// Set successor to match alreadyJumpedBoard
 				successor = alreadyJumpedBoard;
