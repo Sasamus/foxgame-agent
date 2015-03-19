@@ -21,19 +21,26 @@ public class FoxGameEngine implements AiGameEngine {
 	// possibly in the constructor, and store
 	// them instead of making new ones every time.
 
+	// TODO: It is possible that a fox isn't removed when it should --
+	// I've not been able to confirm that it works
+
+	// Foxes sometimes try to do a normal move --
+	// to a space that is occupied by a sheep
+
 	// TODO: Possibly separate this into more classes
 
 	// TODO: General clean up of code, it's rather messy
-
-	// TODO: Implement minimax, using the getUtility method
 
 	// TODO: minimax depth limit, bigger if time
 
 	// TODO: Account for time
 
-	// TODO: Check for unnecessary newing of objects
+	// TODO: Fox seem to to jump onto the other fox, --
+	// even if there are no sheep to jump over
 
-	// TODO: Get a move
+	// TODO: Fox can cause deadlock, sheep may as well, haven't tested
+
+	// TODO: Check for unnecessary newing of objects
 
 	// TODO: Make sure Successors are generated properly --
 	// and that all that can be are
@@ -82,11 +89,43 @@ public class FoxGameEngine implements AiGameEngine {
 		// Acts depending on if status.playerRole equals FOX or SHEEP
 		if (status.playerRole.equals("FOX")) {
 
+			// System.out.println("Successors before: " + successors.size());
+
+			System.out.println("Foxes: " + board.getFoxPositions().size());
+
 			// Get the fox Successors
 			getFoxSuccessors(successors, new Board(board), null,
 					foxesThatHaveMoves, null, false);
+
+			// System.out.println("Successors middle: " + successors.size());
+
 			getFoxSuccessors(successors, new Board(board), null,
 					foxesThatHaveMoves, null, true);
+
+			// System.out.println("Successors after: " + successors.size());
+
+			// Iterate through boards foxPositions
+			for (Position tmpPosition : board.getFoxPositions()) {
+
+				// Holds of tmpPosition can move
+				boolean canMove = false;
+
+				// Iterate through successors, if tmpPosition moves in one of
+				// them
+				// set canMove to true
+				for (Board tmpBoard : successors) {
+					if (tmpBoard.getChangedPositions().contains(tmpPosition)) {
+						canMove = true;
+					}
+				}
+
+				// If tmpPosition can't move, remove it from the board
+				if (!canMove) {
+
+					// Remove tmpPosition from board
+					board.removeFox(tmpPosition);
+				}
+			}
 
 			// Remove elements in successors if they are the same as an previous
 			// state
@@ -120,9 +159,17 @@ public class FoxGameEngine implements AiGameEngine {
 		// bestSuccessor.getSheepPositions().size());
 
 		// Gets the move to create bestSuccessor
-		Move move = Move.move(bestSuccessor.getChangedPositions());
+		// Move move = Move.move(bestSuccessor.getChangedPositions());
 
-		System.out.println("Move sent: " + move.toString());
+		if (bestSuccessor == null) {
+			System.out.println("Null");
+		}
+
+		ArrayList<Position> positions = bestSuccessor.getChangedPositions();
+		Move move;
+		move = Move.move(positions);
+
+		// System.out.println("Move sent: " + move.toString());
 
 		// Return the string version of move
 		return move.toString();
@@ -465,23 +512,24 @@ public class FoxGameEngine implements AiGameEngine {
 				}
 			}
 
-			// If newPositions is not empty
-			if (!newPositions.isEmpty()) {
-
-				// Note that foxPosition have moves it can do
-				foxesThatHaveMoves.add(foxPosition);
-			}
-
 			// Act depending on if jumping or not
 			if (!jump) {
+
+				// Holds a temporary version of successor
+				Board tmpSuccessor;
 
 				// Iterate through newPositions
 				for (Position newPosition : newPositions) {
 
-					successor.changePostition(new Position(foxPosition),
+					// Set tmpSuccessor to match successor
+					tmpSuccessor = new Board(successor);
+
+					// Apply the move
+					tmpSuccessor.changePostition(new Position(foxPosition),
 							new Position(newPosition), false);
 
-					successors.add(successor);
+					// Add tmpSuccessor to successors
+					successors.add(tmpSuccessor);
 				}
 			} else {
 
@@ -502,12 +550,14 @@ public class FoxGameEngine implements AiGameEngine {
 					// System.out.println("Before: "
 					// + tmpSuccessor.getSheepPositions().size());
 
+					// Apply the move
 					tmpSuccessor.changePostition(new Position(foxPosition),
 							new Position(newPosition), true);
 
 					// System.out.println("After: "
 					// + tmpSuccessor.getSheepPositions().size());
 
+					// Add tmpSuccessor to successors
 					successors.add(tmpSuccessor);
 
 					// Call getFoxMoveSuccessors again, since several jumps
@@ -515,17 +565,6 @@ public class FoxGameEngine implements AiGameEngine {
 					getFoxSuccessors(successors, null, new Board(tmpSuccessor),
 							foxesThatHaveMoves, new Position(newPosition.x,
 									newPosition.y), true);
-				}
-			}
-
-			// If we are at the second call of the method
-			if (step == 2) {
-
-				// If foxPosition isn't in foxesThatHaveMoves
-				if (!foxesThatHaveMoves.contains(foxPosition)) {
-
-					// Remove foxPosition from board
-					board.removeFox(foxPosition);
 				}
 			}
 		}
@@ -670,23 +709,10 @@ public class FoxGameEngine implements AiGameEngine {
 	@Override
 	public void updateState(String move) {
 
-		System.out.println("Move made: " + move);
+		// System.out.println("Move made: " + move);
 
 		// Convert move to a char Array
 		char[] moveArray = move.toCharArray();
-
-		// // Holds the nr of moves
-		// int nrOfMoves = 0;
-		//
-		// // A String with a whitespace
-		// String space = " ";
-		//
-		// // Count the nr of spaces in moveArray
-		// for(char character : moveArray){
-		// if(Character.toString(character).equals(space)){
-		// nrOfMoves++;
-		// }
-		// }
 
 		// Holds the x and y values
 		int startX = 0;
@@ -726,14 +752,9 @@ public class FoxGameEngine implements AiGameEngine {
 
 					// It was
 
-					System.out.println("Sheep before: "
-							+ board.getSheepPositions().size());
-
 					board.updateBoard(new Position(startX, startY),
 							new Position(stopX, stopY), true);
 
-					System.out.println("Sheep after: "
-							+ board.getSheepPositions().size());
 				}
 			}
 		}
