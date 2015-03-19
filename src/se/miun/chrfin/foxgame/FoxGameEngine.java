@@ -29,9 +29,9 @@ public class FoxGameEngine implements AiGameEngine {
 
 	// TODO: minimax depth limit, bigger if time
 
-	// TODO: Wathc for and avoid deadlock
-
 	// TODO: Account for time
+	
+	// TODO: Check for unnecessary newing of objects
 
 	// TODO: Get a move
 
@@ -48,6 +48,11 @@ public class FoxGameEngine implements AiGameEngine {
 	 * Holds the Board
 	 */
 	private Board board = new Board();
+	
+	/**
+	 * Holds the previous board states
+	 */
+	private ArrayList<Board> previousStates = new ArrayList<Board>();
 
 	/**
 	 * Constructor
@@ -56,7 +61,7 @@ public class FoxGameEngine implements AiGameEngine {
 	 *            A PlayerSetuo object holding the setup information
 	 */
 	public FoxGameEngine(PlayerSetup setup) {
-
+	
 	}
 
 	/**
@@ -80,11 +85,27 @@ public class FoxGameEngine implements AiGameEngine {
 					foxesThatHaveMoves, null, false);
 			getFoxSuccessors(successors, new Board(board), null,
 					foxesThatHaveMoves, null, true);
+			
+			// Remove elements in successors if they are the same as an previous state
+			for(Board tmpBoard : previousStates){
+				if(successors.contains(tmpBoard)){
+					System.out.println("Boo");
+					successors.remove(tmpBoard);
+				}
+			}
 
 			bestSuccessor = getBestSuccessor(successors, true);
 
 		} else {
 			getSheepSuccessors(successors, new Board(board));
+			
+			// Remove elements in successors if they are the same as an previous state
+			for(Board tmpBoard : previousStates){
+				if(successors.contains(tmpBoard)){
+					System.out.println("Boo");
+					successors.remove(tmpBoard);
+				}
+			}
 
 			bestSuccessor = getBestSuccessor(successors, false);
 		}
@@ -690,19 +711,22 @@ public class FoxGameEngine implements AiGameEngine {
 
 				stopX = Character.getNumericValue(moveArray[i]);
 				stopY = Character.getNumericValue(moveArray[i + 2]);
+				
+				// Add board to previousStates
+				previousStates.add(new Board (board));
 
 				if (nrOfMoves == 1) {
 
-					// System.out.println("Board updating");
 					board.updateBoard(new Position(startX, startY),
 							new Position(stopX, stopY), false);
 
 				} else {
-
+					
+					board.updateBoard(new Position(startX, startY),
+							new Position(stopX, stopY), true);
 				}
 			}
 		}
-
 	}
 
 	@Override
