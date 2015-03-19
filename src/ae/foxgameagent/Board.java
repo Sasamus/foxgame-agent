@@ -321,4 +321,36 @@ public class Board {
 		this.changedPositions = changedPositions;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+
+		// Return false if obj is null
+		if (obj == null) {
+			return false;
+		}
+
+		// Return false if obj isn't a Position object
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+
+		// Cast obj to Board
+		Board board = (Board) obj;
+
+		// If sheepPositions and foxPositions of board amd this Board contains
+		// the same things, return true
+		if (getFoxPositions().containsAll(board.getFoxPositions())
+				&& getSheepPositions().containsAll(board.getSheepPositions())) {
+			return true;
+		}
+
+		// Return false
+		return false;
+	}
+
 }
