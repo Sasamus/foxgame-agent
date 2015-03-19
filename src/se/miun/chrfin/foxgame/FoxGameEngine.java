@@ -30,7 +30,7 @@ public class FoxGameEngine implements AiGameEngine {
 	// TODO: minimax depth limit, bigger if time
 
 	// TODO: Account for time
-	
+
 	// TODO: Check for unnecessary newing of objects
 
 	// TODO: Get a move
@@ -48,7 +48,7 @@ public class FoxGameEngine implements AiGameEngine {
 	 * Holds the Board
 	 */
 	private Board board = new Board();
-	
+
 	/**
 	 * Holds the previous board states
 	 */
@@ -61,7 +61,7 @@ public class FoxGameEngine implements AiGameEngine {
 	 *            A PlayerSetuo object holding the setup information
 	 */
 	public FoxGameEngine(PlayerSetup setup) {
-	
+
 	}
 
 	/**
@@ -81,32 +81,38 @@ public class FoxGameEngine implements AiGameEngine {
 
 		// Acts depending on if status.playerRole equals FOX or SHEEP
 		if (status.playerRole.equals("FOX")) {
+
+			// Get the fox Successors
 			getFoxSuccessors(successors, new Board(board), null,
 					foxesThatHaveMoves, null, false);
 			getFoxSuccessors(successors, new Board(board), null,
 					foxesThatHaveMoves, null, true);
-			
-			// Remove elements in successors if they are the same as an previous state
-			for(Board tmpBoard : previousStates){
-				if(successors.contains(tmpBoard)){
-					System.out.println("Boo");
+
+			// Remove elements in successors if they are the same as an previous
+			// state
+			for (Board tmpBoard : previousStates) {
+				if (successors.contains(tmpBoard)) {
 					successors.remove(tmpBoard);
 				}
 			}
 
+			// Get the best successor
 			bestSuccessor = getBestSuccessor(successors, true);
 
 		} else {
+
+			// Get the sheep Successors
 			getSheepSuccessors(successors, new Board(board));
-			
-			// Remove elements in successors if they are the same as an previous state
-			for(Board tmpBoard : previousStates){
-				if(successors.contains(tmpBoard)){
-					System.out.println("Boo");
+
+			// Remove elements in successors if they are the same as an previous
+			// state
+			for (Board tmpBoard : previousStates) {
+				if (successors.contains(tmpBoard)) {
 					successors.remove(tmpBoard);
 				}
 			}
 
+			// Get the best Successor
 			bestSuccessor = getBestSuccessor(successors, false);
 		}
 
@@ -116,35 +122,10 @@ public class FoxGameEngine implements AiGameEngine {
 		// Gets the move to create bestSuccessor
 		Move move = Move.move(bestSuccessor.getChangedPositions());
 
-		// System.out.println("Move made: " + move.toString());
+		System.out.println("Move sent: " + move.toString());
 
+		// Return the string version of move
 		return move.toString();
-	}
-
-	/**
-	 * Gets the best Successor
-	 * 
-	 * @param successors
-	 *            The Successors available
-	 * @param fox
-	 *            True if a fox move, false if a sheep move
-	 */
-	private Board getBestSuccessorSimple(ArrayList<Board> successors,
-			boolean fox) {
-
-		// Holds the best Successor
-		Board bestSuccessor = successors.get(0);
-
-		// Iterate through successors, will leave bestSuccessor as the one with
-		// the highest utility value
-		for (Board successor : successors) {
-			if (successor.getUtility() > bestSuccessor.getUtility()) {
-				bestSuccessor = successor;
-			}
-		}
-
-		// Return bestSuccessor
-		return bestSuccessor;
 	}
 
 	/**
@@ -357,7 +338,8 @@ public class FoxGameEngine implements AiGameEngine {
 			// Iterate through newPositions
 			for (Position newPosition : newPositions) {
 
-				successor.changePostition(sheepPosition, newPosition, false);
+				successor.changePostition(new Position(sheepPosition),
+						new Position(newPosition), false);
 				successors.add(successor);
 			}
 		}
@@ -688,17 +670,29 @@ public class FoxGameEngine implements AiGameEngine {
 	@Override
 	public void updateState(String move) {
 
-		// Get nr of moves in move
-		int nrOfMoves = move.length() - move.replaceAll(" ", "").length();
+		System.out.println("Move made: " + move);
+
+		// Convert move to a char Array
+		char[] moveArray = move.toCharArray();
+
+		// // Holds the nr of moves
+		// int nrOfMoves = 0;
+		//
+		// // A String with a whitespace
+		// String space = " ";
+		//
+		// // Count the nr of spaces in moveArray
+		// for(char character : moveArray){
+		// if(Character.toString(character).equals(space)){
+		// nrOfMoves++;
+		// }
+		// }
 
 		// Holds the x and y values
 		int startX = 0;
 		int stopX = 0;
 		int startY = 0;
 		int stopY = 0;
-
-		// Convert move to a char Array
-		char[] moveArray = move.toCharArray();
 
 		// Iterate through the moves
 		for (int i = 0; i < moveArray.length; i = i + 4) {
@@ -711,19 +705,35 @@ public class FoxGameEngine implements AiGameEngine {
 
 				stopX = Character.getNumericValue(moveArray[i]);
 				stopY = Character.getNumericValue(moveArray[i + 2]);
-				
-				// Add board to previousStates
-				previousStates.add(new Board (board));
 
-				if (nrOfMoves == 1) {
+				// Add board to previousStates
+				previousStates.add(new Board(board));
+
+				// Get the distance between the two positions to determine of a
+				// jump was made
+				double distance = Math.sqrt(Math.pow((stopY + startY), 2)
+						+ Math.pow((stopX + startX), 2));
+
+				// Was a jump made
+				if (distance == 1) {
+
+					// It was not
 
 					board.updateBoard(new Position(startX, startY),
 							new Position(stopX, stopY), false);
 
 				} else {
-					
+
+					// It was
+
+					System.out.println("Sheep before: "
+							+ board.getSheepPositions().size());
+
 					board.updateBoard(new Position(startX, startY),
 							new Position(stopX, stopY), true);
+
+					System.out.println("Sheep after: "
+							+ board.getSheepPositions().size());
 				}
 			}
 		}

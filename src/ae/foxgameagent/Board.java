@@ -241,6 +241,8 @@ public class Board {
 						// Removes the sheep at that Position
 						sheepPositions.remove(new Position(x, y));
 
+						// System.out.println("Sheep removed: " + x + "," + y);
+
 						// If changedPositions is empty, add both new and old
 						// Positions
 						if (changedPositions.isEmpty()) {
@@ -265,7 +267,8 @@ public class Board {
 			boolean jump) {
 
 		// Call changePosition and clear changedPositions
-		changePostition(oldPosition, newPosition, jump);
+		changePostition(new Position(oldPosition), new Position(newPosition),
+				jump);
 		clearChangedPositions();
 	}
 
