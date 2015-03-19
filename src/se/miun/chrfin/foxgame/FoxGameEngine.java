@@ -22,8 +22,14 @@ public class FoxGameEngine implements AiGameEngine {
 	// them instead of making new ones every time.
 
 	// TODO: Possibly separate this into more classes
+	
+	// TODO: General clean up of code, it's rather messy
 
 	// TODO: Implement minimax, using the getUtility method
+	
+	// TODO: minimax depth limit, bigger if time
+	
+	// TODO: Wathc for and avoid deadlock
 
 	// TODO: Account for time
 
@@ -62,7 +68,7 @@ public class FoxGameEngine implements AiGameEngine {
 		// Holds the Successors
 		ArrayList<Board> successors = new ArrayList<Board>();
 
-		// Holds foxes to remove
+		// Holds foxes that have moves they can do
 		ArrayList<Position> foxesThatHaveMoves = new ArrayList<Position>();
 
 		// Holds a Move
@@ -122,6 +128,8 @@ public class FoxGameEngine implements AiGameEngine {
 	 *            True if a fox move, false if a sheep move
 	 */
 	public Board getBestSuccessor(ArrayList<Board> successors, boolean fox) {
+		
+		// TODO: This should be able to handle being a sheep
 
 		// Holds the best value
 		double bestValue = Double.NEGATIVE_INFINITY;
@@ -133,7 +141,7 @@ public class FoxGameEngine implements AiGameEngine {
 		for (Board tmpSuccessor : successors) {
 
 			// Get alpha
-			double alpha = minMax(tmpSuccessor, bestValue,
+			double alpha = minMax(tmpSuccessor, 10, bestValue,
 					Double.POSITIVE_INFINITY, false);
 
 			// Check if alpha is better than betsValue or that bestSuccessor is
@@ -165,12 +173,11 @@ public class FoxGameEngine implements AiGameEngine {
 	 *            True if looking for Max else false
 	 * @return The utility value of the best Successor
 	 */
-	@SuppressWarnings("unchecked")
-	double minMax(Board node, double alpha, double beta,
+	double minMax(Board node, int depth, double alpha, double beta,
 			boolean max) {
 
-		// Check if nodes state is terminal
-		if (node.isTerminal() == 1 || node.isTerminal() == 2) {
+		// Check if nodes state is terminal or at max depth
+		if (node.isTerminal() == 1 || node.isTerminal() == 2 || depth == 0) {
 
 			// If so, return it's utility
 			return node.getUtility();
@@ -183,17 +190,21 @@ public class FoxGameEngine implements AiGameEngine {
 			double newAlpha = Double.NEGATIVE_INFINITY;
 
 			// Holds the Successors
-			ArrayList<Board> successors;
+			ArrayList<Board> successors = new ArrayList<Board>();
+			
+			// Holds foxes that have moves they can do
+			ArrayList<Position> foxesThatHaveMoves = new ArrayList<Position>();
 			
 			// Get the Fox Successors
-			getFoxSuccessors(successors, alreadyJumpedBoard, foxesThatHaveMoves, foxToJump, jump);
+			getFoxSuccessors(successors, null, foxesThatHaveMoves, null, false);
+			getFoxSuccessors(successors, null, foxesThatHaveMoves, null, true);
 
 			// Iterate through successors
-			for (Successor<State, Action> tmpSuccessor : successors) {
+			for (Board tmpSuccessor : successors) {
 
 				// Set newAlpha with the max of newAlpha and minMax with false
 				newAlpha = Math.max(newAlpha,
-						minMax(tmpSuccessor, alpha, beta, false));
+						minMax(tmpSuccessor, depth - 1, alpha, beta, false));
 
 				// Set alpha with the max of newAlpha and alpha
 				alpha = Math.max(newAlpha, alpha);
@@ -213,17 +224,19 @@ public class FoxGameEngine implements AiGameEngine {
 
 			// Create and set newBeta
 			double newBeta = Double.POSITIVE_INFINITY;
+			
+			// Holds the Successors
+			ArrayList<Board> successors = new ArrayList<Board>();
 
-			// Get a List of successors from game
-			ArrayList<Successor<State, Action>> successors = (ArrayList<Successor<State, Action>>) game
-					.getSuccessors(node.state);
+			// Get the Sheep Successors
+			getSheepSuccessors(successors);
 
 			// Iterate through successors
-			for (Successor<State, Action> tmpSuccessor : successors) {
+			for (Board tmpSuccessor : successors) {
 
 				// Set newBeta with the min of newBeta and minMax with true
 				newBeta = Math.min(newBeta,
-						minMax(tmpSuccessor, alpha, beta, true));
+						minMax(tmpSuccessor, depth - 1, alpha, beta, true));
 
 				// Set beta with the min of newBeta and beta
 				beta = Math.min(newBeta, beta);
@@ -264,44 +277,39 @@ public class FoxGameEngine implements AiGameEngine {
 			int x = sheepPosition.getX();
 			int y = sheepPosition.getY();
 
-			// TODO: Uncomment, adapt to work, --
-			// things have changes since it went into hiding
-
 			// Attempt to add new Positions based on horizontal and vertical
 			// moves to newPositions
-			// newPositionRight(x, y, 1);
-			// newPositionUp(x, y, 1);
-			// newPositionLeft(x, y, 1);
-			//
-			// // Attempt to add new Positions based on diagonal moves, when
-			// they
-			// // can be made, to newPositions
-			// if (y == 2 || y == 6) {
-			// if (x == 4) {
-			// newPositionUpLeft(x, y, 1);
-			// newPositionUpRight(x, y, 1);
-			// }
-			// } else if (y == 3) {
-			// if (x == 3 || x == 5) {
-			// newPositionUpLeft(x, y, 1);
-			// newPositionUpRight(x, y, 1);
-			// }
-			// } else if (y == 4) {
-			// if (x == 2 || x == 4 || x == 6) {
-			// newPositionUpLeft(x, y, 1);
-			// newPositionUpRight(x, y, 1);
-			// }
-			// } else if (y == 5) {
-			// if (x == 1 || x == 3 || x == 5 || x == 7) {
-			// newPositionUpLeft(x, y, 1);
-			// newPositionUpRight(x, y, 1);
-			// }
-			// } else if (y == 7) {
-			// if (x == 3 || x == 5) {
-			// newPositionUpLeft(x, y, 1);
-			// newPositionUpRight(x, y, 1);
-			// }
-			// }
+			tryAddAllHorizontalAndVerticalNewPositions(successor, newPositions,
+					x, y, 1, true);
+			
+			// Attempt to add new Positions based on diagonal moves, when
+			// they can be made, to newPositions
+			if (y == 2 || y == 6) {
+				if (x == 4) {
+					tryAddAllDiagonalNewPositions(successor, newPositions, x,
+							y, 1, true);
+				}
+			} else if (y == 3) {
+				if (x == 3 || x == 5) {
+					tryAddAllDiagonalNewPositions(successor, newPositions, x,
+							y, 1, true);
+				}
+			} else if (y == 4) {
+				if (x == 2 || x == 4 || x == 6) {
+					tryAddAllDiagonalNewPositions(successor, newPositions, x,
+							y, 1, true);
+				}
+			} else if (y == 5) {
+				if (x == 1 || x == 3 || x == 5 || x == 7) {
+					tryAddAllDiagonalNewPositions(successor, newPositions, x,
+							y, 1, true);
+				}
+			} else if (y == 7) {
+				if (x == 3 || x == 5) {
+					tryAddAllDiagonalNewPositions(successor, newPositions, x,
+							y, 1, true);
+				}
+			}
 
 			// Iterate through newPositions
 			for (Position newPosition : newPositions) {
@@ -386,7 +394,7 @@ public class FoxGameEngine implements AiGameEngine {
 			// Attempt to add new Positions based on horizontal and vertical
 			// moves to newPositions
 			tryAddAllHorizontalAndVerticalNewPositions(successor, newPositions,
-					x, y, step);
+					x, y, step, false);
 
 			// Attempt to add new Positions based on diagonal moves, when they
 			// can be made, to newPositions
@@ -400,22 +408,22 @@ public class FoxGameEngine implements AiGameEngine {
 			} else if (y == 2 || y == 6) {
 				if (x == 4) {
 					tryAddAllDiagonalNewPositions(successor, newPositions, x,
-							y, step);
+							y, step, false);
 				}
 			} else if (y == 3) {
 				if (x == 1 || x == 3 || x == 5 || x == 7) {
 					tryAddAllDiagonalNewPositions(successor, newPositions, x,
-							y, step);
+							y, step, false);
 				}
 			} else if (y == 4) {
 				if (x == 2 || x == 4 || x == 6) {
 					tryAddAllDiagonalNewPositions(successor, newPositions, x,
-							y, step);
+							y, step, false);
 				}
 			} else if (y == 5) {
 				if (x == 1 || x == 3 || x == 5 || x == 7) {
 					tryAddAllDiagonalNewPositions(successor, newPositions, x,
-							y, step);
+							y, step, false);
 				}
 			} else if (y == 7) {
 				if (x == 3 || x == 5) {
@@ -505,12 +513,16 @@ public class FoxGameEngine implements AiGameEngine {
 	 * 
 	 */
 	private void tryAddAllDiagonalNewPositions(Board theBoard,
-			ArrayList<Position> newPositions, int x, int y, int step) {
+			ArrayList<Position> newPositions, int x, int y, int step, boolean onlyUpwards) {
 
 		newPosition(theBoard, newPositions, x, y, step, "upleft");
 		newPosition(theBoard, newPositions, x, y, step, "upright");
-		newPosition(theBoard, newPositions, x, y, step, "downleft");
-		newPosition(theBoard, newPositions, x, y, step, "downright");
+		
+		if(!onlyUpwards){
+			newPosition(theBoard, newPositions, x, y, step, "downleft");
+			newPosition(theBoard, newPositions, x, y, step, "downright");
+		}
+		
 	}
 
 	/**
@@ -529,10 +541,14 @@ public class FoxGameEngine implements AiGameEngine {
 	 *            The nr of steps to move in a direction
 	 */
 	private void tryAddAllHorizontalAndVerticalNewPositions(Board theBoard,
-			ArrayList<Position> newPositions, int x, int y, int step) {
+			ArrayList<Position> newPositions, int x, int y, int step, boolean onlyUpwards) {
 
 		newPosition(theBoard, newPositions, x, y, step, "up");
-		newPosition(theBoard, newPositions, x, y, step, "down");
+		
+		if(!onlyUpwards){
+			newPosition(theBoard, newPositions, x, y, step, "down");
+		}
+		
 		newPosition(theBoard, newPositions, x, y, step, "left");
 		newPosition(theBoard, newPositions, x, y, step, "right");
 	}
