@@ -62,6 +62,12 @@ public class Board {
 		for (Position position : board.getFoxPositions()) {
 			foxPositions.add(new Position(position));
 		}
+		
+		// Fill changedPositions with new Positions with the same values as the ones
+		// in board
+		for (Position position : board.getChangedPositions()) {
+			changedPositions.add(new Position(position));
+		}
 	}
 
 	/**
@@ -107,12 +113,14 @@ public class Board {
 	 * 
 	 * @return The utility value
 	 */
-	public int getUtility() {
+	public double getUtility() {
 
-		// TODO: Makes this better, currently rather shit
+		// TODO: Makes this better, currently rather shit.
+
+		// TODO: Account for the foxes positions, proximity to 4,3 perhaps.
 
 		// Holds the utility value
-		int value = 0;
+		double value = 0;
 
 		// Iterate through sheepPositions
 		for (Position position : getSheepPositions()) {
@@ -125,7 +133,7 @@ public class Board {
 		value = value / getSheepPositions().size();
 
 		// Return value
-		return value;
+		return 20 - getSheepPositions().size();
 	}
 
 	/**

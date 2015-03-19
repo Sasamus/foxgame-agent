@@ -22,13 +22,13 @@ public class FoxGameEngine implements AiGameEngine {
 	// them instead of making new ones every time.
 
 	// TODO: Possibly separate this into more classes
-	
+
 	// TODO: General clean up of code, it's rather messy
 
 	// TODO: Implement minimax, using the getUtility method
-	
+
 	// TODO: minimax depth limit, bigger if time
-	
+
 	// TODO: Wathc for and avoid deadlock
 
 	// TODO: Account for time
@@ -71,23 +71,29 @@ public class FoxGameEngine implements AiGameEngine {
 		// Holds foxes that have moves they can do
 		ArrayList<Position> foxesThatHaveMoves = new ArrayList<Position>();
 
-		// Holds a Move
-		Move move;
+		// Holds the best Successor
+		Board bestSuccessor;
 
 		// Acts depending on if status.playerRole equals FOX or SHEEP
 		if (status.playerRole.equals("FOX")) {
-			getFoxSuccessors(successors, null, foxesThatHaveMoves, null, false);
-			getFoxSuccessors(successors, null, foxesThatHaveMoves, null, true);
+			getFoxSuccessors(successors, new Board(board), null,
+					foxesThatHaveMoves, null, false);
+			getFoxSuccessors(successors, new Board(board), null,
+					foxesThatHaveMoves, null, true);
 
-			move = Move.move(getBestSuccessor(successors, true)
-					.getChangedPositions());
+			bestSuccessor = getBestSuccessor(successors, true);
 
 		} else {
-			getSheepSuccessors(successors);
+			getSheepSuccessors(successors, new Board(board));
 
-			move = Move.move(getBestSuccessor(successors, false)
-					.getChangedPositions());
+			bestSuccessor = getBestSuccessor(successors, false);
 		}
+
+		// System.out.println("Sheep: " +
+		// bestSuccessor.getSheepPositions().size());
+
+		// Gets the move to create bestSuccessor
+		Move move = Move.move(bestSuccessor.getChangedPositions());
 
 		// System.out.println("Move made: " + move.toString());
 
@@ -102,7 +108,8 @@ public class FoxGameEngine implements AiGameEngine {
 	 * @param fox
 	 *            True if a fox move, false if a sheep move
 	 */
-	private Board getBestSuccessorSimple(ArrayList<Board> successors, boolean fox) {
+	private Board getBestSuccessorSimple(ArrayList<Board> successors,
+			boolean fox) {
 
 		// Holds the best Successor
 		Board bestSuccessor = successors.get(0);
@@ -118,7 +125,7 @@ public class FoxGameEngine implements AiGameEngine {
 		// Return bestSuccessor
 		return bestSuccessor;
 	}
-	
+
 	/**
 	 * Gets the best Successor
 	 * 
@@ -128,11 +135,14 @@ public class FoxGameEngine implements AiGameEngine {
 	 *            True if a fox move, false if a sheep move
 	 */
 	public Board getBestSuccessor(ArrayList<Board> successors, boolean fox) {
-		
+
 		// TODO: This should be able to handle being a sheep
 
 		// Holds the best value
 		double bestValue = Double.NEGATIVE_INFINITY;
+
+		// Holds the depth to search to
+		int depth = 3;
 
 		// Holds the best Successor
 		Board bestSuccessor = null;
@@ -141,7 +151,7 @@ public class FoxGameEngine implements AiGameEngine {
 		for (Board tmpSuccessor : successors) {
 
 			// Get alpha
-			double alpha = minMax(tmpSuccessor, 10, bestValue,
+			double alpha = minMax(tmpSuccessor, depth, bestValue,
 					Double.POSITIVE_INFINITY, false);
 
 			// Check if alpha is better than betsValue or that bestSuccessor is
@@ -173,11 +183,12 @@ public class FoxGameEngine implements AiGameEngine {
 	 *            True if looking for Max else false
 	 * @return The utility value of the best Successor
 	 */
-	double minMax(Board node, int depth, double alpha, double beta,
-			boolean max) {
+	double minMax(Board node, int depth, double alpha, double beta, boolean max) {
 
 		// Check if nodes state is terminal or at max depth
 		if (node.isTerminal() == 1 || node.isTerminal() == 2 || depth == 0) {
+
+			// System.out.println("Utility: " + node.getUtility());
 
 			// If so, return it's utility
 			return node.getUtility();
@@ -191,13 +202,15 @@ public class FoxGameEngine implements AiGameEngine {
 
 			// Holds the Successors
 			ArrayList<Board> successors = new ArrayList<Board>();
-			
+
 			// Holds foxes that have moves they can do
 			ArrayList<Position> foxesThatHaveMoves = new ArrayList<Position>();
-			
+
 			// Get the Fox Successors
-			getFoxSuccessors(successors, null, foxesThatHaveMoves, null, false);
-			getFoxSuccessors(successors, null, foxesThatHaveMoves, null, true);
+			getFoxSuccessors(successors, node, null, foxesThatHaveMoves, null,
+					false);
+			getFoxSuccessors(successors, node, null, foxesThatHaveMoves, null,
+					true);
 
 			// Iterate through successors
 			for (Board tmpSuccessor : successors) {
@@ -224,12 +237,12 @@ public class FoxGameEngine implements AiGameEngine {
 
 			// Create and set newBeta
 			double newBeta = Double.POSITIVE_INFINITY;
-			
+
 			// Holds the Successors
 			ArrayList<Board> successors = new ArrayList<Board>();
 
 			// Get the Sheep Successors
-			getSheepSuccessors(successors);
+			getSheepSuccessors(successors, node);
 
 			// Iterate through successors
 			for (Board tmpSuccessor : successors) {
@@ -257,9 +270,15 @@ public class FoxGameEngine implements AiGameEngine {
 	/**
 	 * get a list of Successors for a sheep move
 	 * 
+	 * @param successors
+	 *            The List to add Successors to
+	 * 
+	 * @param node
+	 *            The node to get Successors from
+	 * 
 	 * @return An ArrayList holding Board objects representing the Successors
 	 */
-	private void getSheepSuccessors(ArrayList<Board> successors) {
+	private void getSheepSuccessors(ArrayList<Board> successors, Board node) {
 
 		// Holds a successor
 		Board successor;
@@ -268,10 +287,10 @@ public class FoxGameEngine implements AiGameEngine {
 		ArrayList<Position> newPositions = new ArrayList<Position>();
 
 		// Iterate through sheepPositions
-		for (Position sheepPosition : board.getSheepPositions()) {
+		for (Position sheepPosition : node.getSheepPositions()) {
 
-			// Set successor to match board
-			successor = new Board(board);
+			// Set successor to match node
+			successor = new Board(node);
 
 			// Get the x and y values of foxPosition
 			int x = sheepPosition.getX();
@@ -281,7 +300,7 @@ public class FoxGameEngine implements AiGameEngine {
 			// moves to newPositions
 			tryAddAllHorizontalAndVerticalNewPositions(successor, newPositions,
 					x, y, 1, true);
-			
+
 			// Attempt to add new Positions based on diagonal moves, when
 			// they can be made, to newPositions
 			if (y == 2 || y == 6) {
@@ -325,6 +344,8 @@ public class FoxGameEngine implements AiGameEngine {
 	 * 
 	 * @param successors
 	 *            The List to add Successors to
+	 * @param node
+	 *            The node to get Successors from
 	 * @param alreadyJumpedBoard
 	 *            The board state if one or more jumps have already happened
 	 * @param foxesThatHaveMoves
@@ -334,7 +355,7 @@ public class FoxGameEngine implements AiGameEngine {
 	 * @param jump
 	 *            If jumps are happening
 	 */
-	private void getFoxSuccessors(ArrayList<Board> successors,
+	private void getFoxSuccessors(ArrayList<Board> successors, Board node,
 			Board alreadyJumpedBoard, ArrayList<Position> foxesThatHaveMoves,
 			Position foxToJump, boolean jump) {
 
@@ -359,8 +380,8 @@ public class FoxGameEngine implements AiGameEngine {
 
 		// Acts depending on if jumps have happened
 		if (alreadyJumpedBoard == null) {
-			// Set successor to match board
-			successor = new Board(board);
+			// Set successor to match node
+			successor = new Board(node);
 
 			// Set foxesToJump to successors foxPositions
 			foxesToMove = successor.getFoxPositions();
@@ -380,8 +401,8 @@ public class FoxGameEngine implements AiGameEngine {
 
 			// Acts depending on if jumps have happened
 			if (alreadyJumpedBoard == null) {
-				// Set successor to match board
-				successor = new Board(board);
+				// Set successor to match node
+				successor = new Board(node);
 			} else {
 				// Set successor to match alreadyJumpedBoard
 				successor = alreadyJumpedBoard;
@@ -468,8 +489,10 @@ public class FoxGameEngine implements AiGameEngine {
 					//
 					// System.out.println("Before: "
 					// + tmpSuccessor.getSheepPositions().size());
+
 					tmpSuccessor.changePostition(new Position(foxPosition),
 							new Position(newPosition), true);
+
 					// System.out.println("After: "
 					// + tmpSuccessor.getSheepPositions().size());
 
@@ -477,7 +500,7 @@ public class FoxGameEngine implements AiGameEngine {
 
 					// Call getFoxMoveSuccessors again, since several jumps
 					// are allowed
-					getFoxSuccessors(successors, tmpSuccessor,
+					getFoxSuccessors(successors, null, new Board(tmpSuccessor),
 							foxesThatHaveMoves, new Position(newPosition.x,
 									newPosition.y), true);
 				}
@@ -513,16 +536,17 @@ public class FoxGameEngine implements AiGameEngine {
 	 * 
 	 */
 	private void tryAddAllDiagonalNewPositions(Board theBoard,
-			ArrayList<Position> newPositions, int x, int y, int step, boolean onlyUpwards) {
+			ArrayList<Position> newPositions, int x, int y, int step,
+			boolean onlyUpwards) {
 
 		newPosition(theBoard, newPositions, x, y, step, "upleft");
 		newPosition(theBoard, newPositions, x, y, step, "upright");
-		
-		if(!onlyUpwards){
+
+		if (!onlyUpwards) {
 			newPosition(theBoard, newPositions, x, y, step, "downleft");
 			newPosition(theBoard, newPositions, x, y, step, "downright");
 		}
-		
+
 	}
 
 	/**
@@ -541,14 +565,15 @@ public class FoxGameEngine implements AiGameEngine {
 	 *            The nr of steps to move in a direction
 	 */
 	private void tryAddAllHorizontalAndVerticalNewPositions(Board theBoard,
-			ArrayList<Position> newPositions, int x, int y, int step, boolean onlyUpwards) {
+			ArrayList<Position> newPositions, int x, int y, int step,
+			boolean onlyUpwards) {
 
 		newPosition(theBoard, newPositions, x, y, step, "up");
-		
-		if(!onlyUpwards){
+
+		if (!onlyUpwards) {
 			newPosition(theBoard, newPositions, x, y, step, "down");
 		}
-		
+
 		newPosition(theBoard, newPositions, x, y, step, "left");
 		newPosition(theBoard, newPositions, x, y, step, "right");
 	}
