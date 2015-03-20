@@ -345,7 +345,7 @@ public class Board {
 		// Cast obj to Board
 		Board board = (Board) obj;
 
-		// If sheepPositions and foxPositions of board amd this Board contains
+		// If sheepPositions and foxPositions of board and this Board contains
 		// the same things, return true
 		if (getFoxPositions().containsAll(board.getFoxPositions())
 				&& getSheepPositions().containsAll(board.getSheepPositions())) {

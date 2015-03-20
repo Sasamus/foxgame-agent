@@ -23,12 +23,15 @@ public class FoxGameEngine implements AiGameEngine {
 
 	// Foxes sometimes try to do a normal move --
 	// to a space that is occupied by a sheep
+	// may have been indirectly fixed.
 
 	// TODO: Possibly separate this into more classes
 
 	// TODO: General clean up of code, it's rather messy
 
 	// TODO: minimax depth limit, bigger if time
+
+	// TODO: Sheep make bad moves, a bug or just a bad utility method?
 
 	// TODO: Account for time
 
@@ -39,8 +42,10 @@ public class FoxGameEngine implements AiGameEngine {
 
 	// TODO: Fox seem to to jump onto the other fox, --
 	// even if there are no sheep to jump over
+	// may have been indirectly fixed.
 
-	// TODO: Fox can cause deadlock, sheep may as well, haven't tested
+	// TODO: Fox can cause deadlock, sheep may as well, haven't tested --
+	// may have been indirectly fixed.
 
 	// TODO: Check for unnecessary newing of objects
 
@@ -82,9 +87,6 @@ public class FoxGameEngine implements AiGameEngine {
 		// Holds the Successors
 		ArrayList<Board> successors = new ArrayList<Board>();
 
-		// Holds foxes that have moves they can do
-		ArrayList<Position> foxesThatHaveMoves = new ArrayList<Position>();
-
 		// Holds the best Successor
 		Board bestSuccessor;
 
@@ -96,16 +98,15 @@ public class FoxGameEngine implements AiGameEngine {
 			// System.out.println("Foxes: " + board.getFoxPositions().size());
 
 			// Get the fox Successors
-			getFoxSuccessors(successors, new Board(board), null,
-					foxesThatHaveMoves, null, false);
+			getFoxSuccessors(successors, new Board(board), null, null, false);
 
 			// System.out.println("Successors middle: " + successors.size());
 
-			getFoxSuccessors(successors, new Board(board), null,
-					foxesThatHaveMoves, null, true);
+			getFoxSuccessors(successors, new Board(board), null, null, true);
 
 			// System.out.println("Successors after: " + successors.size());
 
+			// Holds foxes to remove from the board
 			ArrayList<Position> toRemove = new ArrayList<Position>();
 
 			// Iterate through boards foxPositions
@@ -137,14 +138,6 @@ public class FoxGameEngine implements AiGameEngine {
 				board.removeFox(tmpPosition);
 			}
 
-			// Remove elements in successors if they are the same as an previous
-			// state
-			for (Board tmpBoard : previousStates) {
-				if (successors.contains(tmpBoard)) {
-					successors.remove(tmpBoard);
-				}
-			}
-
 			// Get the best successor
 			bestSuccessor = getBestSuccessor(successors, true);
 
@@ -152,14 +145,6 @@ public class FoxGameEngine implements AiGameEngine {
 
 			// Get the sheep Successors
 			getSheepSuccessors(successors, new Board(board));
-
-			// Remove elements in successors if they are the same as an previous
-			// state
-			for (Board tmpBoard : previousStates) {
-				if (successors.contains(tmpBoard)) {
-					successors.remove(tmpBoard);
-				}
-			}
 
 			// Get the best Successor
 			bestSuccessor = getBestSuccessor(successors, false);
@@ -189,31 +174,59 @@ public class FoxGameEngine implements AiGameEngine {
 
 		// TODO: This should be able to handle being a sheep
 
-		// Holds the best value
-		double bestValue = Double.NEGATIVE_INFINITY;
+		// Holds the best Successor
+		Board bestSuccessor = null;
 
 		// Holds the depth to search to
 		int depth = 3;
 
-		// Holds the best Successor
-		Board bestSuccessor = null;
+		if (fox) {
 
-		// Iterate through successors
-		for (Board tmpSuccessor : successors) {
+			// Holds the best value
+			double bestValue = Double.NEGATIVE_INFINITY;
 
-			// Get alpha
-			double alpha = minMax(tmpSuccessor, depth, bestValue,
-					Double.POSITIVE_INFINITY, false);
+			// Iterate through successors
+			for (Board tmpSuccessor : successors) {
 
-			// Check if alpha is better than betsValue or that bestSuccessor is
-			// null
-			if (alpha > bestValue || bestSuccessor == null) {
+				// Get alpha
+				double alpha = minMax(tmpSuccessor, depth, bestValue,
+						Double.POSITIVE_INFINITY, false);
 
-				// Set bestSuccessor to tmpSuccessor
-				bestSuccessor = tmpSuccessor;
+				// Check if alpha is better than betsValue or that bestSuccessor
+				// is
+				// null
+				if (alpha > bestValue || bestSuccessor == null) {
 
-				// Set bestValue to alpha
-				bestValue = alpha;
+					// Set bestSuccessor to tmpSuccessor
+					bestSuccessor = tmpSuccessor;
+
+					// Set bestValue to alpha
+					bestValue = alpha;
+				}
+			}
+		} else {
+
+			// Holds the best value
+			double bestValue = Double.POSITIVE_INFINITY;
+
+			// Iterate through successors
+			for (Board tmpSuccessor : successors) {
+
+				// Get beta
+				double beta = minMax(tmpSuccessor, depth, bestValue,
+						Double.POSITIVE_INFINITY, true);
+
+				// Check if alpha is better than betsValue or that bestSuccessor
+				// is
+				// null
+				if (beta < bestValue || bestSuccessor == null) {
+
+					// Set bestSuccessor to tmpSuccessor
+					bestSuccessor = tmpSuccessor;
+
+					// Set bestValue to beta
+					bestValue = beta;
+				}
 			}
 		}
 
@@ -254,14 +267,9 @@ public class FoxGameEngine implements AiGameEngine {
 			// Holds the Successors
 			ArrayList<Board> successors = new ArrayList<Board>();
 
-			// Holds foxes that have moves they can do
-			ArrayList<Position> foxesThatHaveMoves = new ArrayList<Position>();
-
 			// Get the Fox Successors
-			getFoxSuccessors(successors, new Board(node), null,
-					foxesThatHaveMoves, null, false);
-			getFoxSuccessors(successors, new Board(node), null,
-					foxesThatHaveMoves, null, true);
+			getFoxSuccessors(successors, new Board(node), null, null, false);
+			getFoxSuccessors(successors, new Board(node), null, null, true);
 
 			// Iterate through successors
 			for (Board tmpSuccessor : successors) {
@@ -343,6 +351,9 @@ public class FoxGameEngine implements AiGameEngine {
 			// Set successor to node
 			successor = new Board(node);
 
+			// Clear newPositions
+			newPositions.clear();
+
 			// Clear changedPositions
 			successor.clearChangedPositions();
 
@@ -384,12 +395,23 @@ public class FoxGameEngine implements AiGameEngine {
 				}
 			}
 
+			// Holds a temporary version of successor
+			Board tmpSuccessor;
+
 			// Iterate through newPositions
 			for (Position newPosition : newPositions) {
 
-				successor.changePostition(new Position(sheepPosition),
+				// Set tmpSuccessor to match successor
+				tmpSuccessor = new Board(successor);
+
+				// Make the move
+				tmpSuccessor.changePostition(new Position(sheepPosition),
 						new Position(newPosition), false);
-				successors.add(successor);
+
+				// Add successor to successors, if it doesn't cause a deadlock
+				if (!previousStates.contains(tmpSuccessor)) {
+					successors.add(tmpSuccessor);
+				}
 			}
 		}
 	}
@@ -403,16 +425,13 @@ public class FoxGameEngine implements AiGameEngine {
 	 *            The node to get Successors from
 	 * @param alreadyJumpedBoard
 	 *            The board state if one or more jumps have already happened
-	 * @param foxesThatHaveMoves
-	 *            A List of foxes that have moves they can do
 	 * @param foxToJump
 	 *            The fox that are allowed to jump again
 	 * @param jump
 	 *            If jumps are happening
 	 */
 	private void getFoxSuccessors(ArrayList<Board> successors, Board node,
-			Board alreadyJumpedBoard, ArrayList<Position> foxesThatHaveMoves,
-			Position foxToJump, boolean jump) {
+			Board alreadyJumpedBoard, Position foxToJump, boolean jump) {
 
 		// System.out.println("New call----------------------------");
 
@@ -530,8 +549,12 @@ public class FoxGameEngine implements AiGameEngine {
 					tmpSuccessor.changePostition(new Position(foxPosition),
 							new Position(newPosition), false);
 
-					// Add tmpSuccessor to successors
-					successors.add(tmpSuccessor);
+					// Add tmpSuccessor to successors, if it doesn't cause a
+					// deadlock
+					if (!previousStates.contains(tmpSuccessor)) {
+						successors.add(tmpSuccessor);
+					}
+
 				}
 			} else {
 
@@ -559,14 +582,16 @@ public class FoxGameEngine implements AiGameEngine {
 					// System.out.println("After: "
 					// + tmpSuccessor.getSheepPositions().size());
 
-					// Add tmpSuccessor to successors
-					successors.add(tmpSuccessor);
+					// Add tmpSuccessor to successors, if it doesn't cause a
+					// deadlock
+					if (!previousStates.contains(tmpSuccessor)) {
+						successors.add(tmpSuccessor);
+					}
 
 					// Call getFoxMoveSuccessors again, since several jumps
 					// are allowed
 					getFoxSuccessors(successors, null, new Board(tmpSuccessor),
-							foxesThatHaveMoves, new Position(newPosition.x,
-									newPosition.y), true);
+							new Position(newPosition.x, newPosition.y), true);
 				}
 			}
 		}
@@ -705,7 +730,6 @@ public class FoxGameEngine implements AiGameEngine {
 				newPositions.add(new Position(x + xOffset, y + yOffset));
 			}
 		}
-
 	}
 
 	@Override
@@ -737,25 +761,26 @@ public class FoxGameEngine implements AiGameEngine {
 				// Add board to previousStates
 				previousStates.add(new Board(board));
 
-				// Get the distance between the two positions to determine of a
-				// jump was made
-				double distance = Math.sqrt(Math.pow((stopY + startY), 2)
-						+ Math.pow((stopX + startX), 2));
+				// Get the difference between the x values and the y values
+				int xDiff = Math.abs(startX - stopX);
+				int yDiff = Math.abs(startY - stopY);
 
 				// Was a jump made
-				if (distance == 1) {
-
-					// It was not
-
-					board.updateBoard(new Position(startX, startY),
-							new Position(stopX, stopY), false);
-
-				} else {
+				if (xDiff > 1 || yDiff > 1) {
 
 					// It was
 
+					// Update board, jumo
 					board.updateBoard(new Position(startX, startY),
 							new Position(stopX, stopY), true);
+
+				} else {
+
+					// It was not
+
+					// Update board, not jump
+					board.updateBoard(new Position(startX, startY),
+							new Position(stopX, stopY), false);
 
 				}
 			}
