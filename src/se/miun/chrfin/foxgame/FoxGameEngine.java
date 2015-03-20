@@ -193,8 +193,7 @@ public class FoxGameEngine implements AiGameEngine {
 						Double.POSITIVE_INFINITY, false);
 
 				// Check if alpha is better than betsValue or that bestSuccessor
-				// is
-				// null
+				// is null
 				if (alpha > bestValue || bestSuccessor == null) {
 
 					// Set bestSuccessor to tmpSuccessor
@@ -213,12 +212,11 @@ public class FoxGameEngine implements AiGameEngine {
 			for (Board tmpSuccessor : successors) {
 
 				// Get beta
-				double beta = minMax(tmpSuccessor, depth, bestValue,
-						Double.POSITIVE_INFINITY, true);
+				double beta = minMax(tmpSuccessor, depth,
+						Double.NEGATIVE_INFINITY, bestValue, true);
 
-				// Check if alpha is better than betsValue or that bestSuccessor
-				// is
-				// null
+				// Check if beta is better than betsValue or that bestSuccessor
+				// is null
 				if (beta < bestValue || bestSuccessor == null) {
 
 					// Set bestSuccessor to tmpSuccessor

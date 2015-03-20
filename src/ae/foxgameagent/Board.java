@@ -134,7 +134,7 @@ public class Board {
 		value = value / getSheepPositions().size();
 
 		// Return value
-		return 20 - getSheepPositions().size();
+		return value;
 	}
 
 	/**
