@@ -21,7 +21,10 @@ public class FoxGameEngine implements AiGameEngine {
 	// possibly in the constructor, and store
 	// them instead of making new ones every time.
 
-	// Foxes sometimes try to do a normal move --
+	// TODO: Think while waiting for opponents move, possibly by using saved
+	// successors
+
+	// TODO: Foxes sometimes try to do a normal move --
 	// to a space that is occupied by a sheep
 	// may have been indirectly fixed.
 
@@ -30,8 +33,6 @@ public class FoxGameEngine implements AiGameEngine {
 	// TODO: General clean up of code, it's rather messy
 
 	// TODO: minimax depth limit, bigger if time
-
-	// TODO: Sheep make bad moves, a bug or just a bad utility method?
 
 	// TODO: Account for time
 
@@ -69,6 +70,11 @@ public class FoxGameEngine implements AiGameEngine {
 	private ArrayList<Board> previousStates = new ArrayList<Board>();
 
 	/**
+	 * Holds the time the agent must return a move by
+	 */
+	private long finnishBy;
+
+	/**
 	 * Constructor
 	 * 
 	 * @param setup
@@ -83,6 +89,9 @@ public class FoxGameEngine implements AiGameEngine {
 	 */
 	@Override
 	public String getMove(GameStatus status) {
+
+		// Set finnishBy
+		finnishBy = System.currentTimeMillis() + status.timeSlice;
 
 		// Holds the Successors
 		ArrayList<Board> successors = new ArrayList<Board>();
@@ -178,7 +187,7 @@ public class FoxGameEngine implements AiGameEngine {
 		Board bestSuccessor = null;
 
 		// Holds the depth to search to
-		int depth = 3;
+		int depth = 5;
 
 		if (fox) {
 
@@ -248,7 +257,8 @@ public class FoxGameEngine implements AiGameEngine {
 	double minMax(Board node, int depth, double alpha, double beta, boolean max) {
 
 		// Check if nodes state is terminal or at max depth
-		if (node.isTerminal() == 1 || node.isTerminal() == 2 || depth == 0) {
+		if (node.isTerminal() == 1 || node.isTerminal() == 2 || depth == 0
+				|| (finnishBy - System.currentTimeMillis()) < 10) {
 
 			// System.out.println("Utility: " + node.getUtility());
 
