@@ -21,9 +21,6 @@ public class FoxGameEngine implements AiGameEngine {
 	// possibly in the constructor, and store
 	// them instead of making new ones every time.
 
-	// TODO: It is possible that a fox isn't removed when it should --
-	// I've not been able to confirm that it works
-
 	// Foxes sometimes try to do a normal move --
 	// to a space that is occupied by a sheep
 
@@ -34,6 +31,11 @@ public class FoxGameEngine implements AiGameEngine {
 	// TODO: minimax depth limit, bigger if time
 
 	// TODO: Account for time
+
+	// TODO: Playing sheep and a fox is removed --
+	// not handled. Shouldn't cause errors but --
+	// moving to that fox's position wouldn't be considered
+	// Are we notified of removed foxes (and sheep), in getMove or uptadeState?
 
 	// TODO: Fox seem to to jump onto the other fox, --
 	// even if there are no sheep to jump over
@@ -91,7 +93,7 @@ public class FoxGameEngine implements AiGameEngine {
 
 			// System.out.println("Successors before: " + successors.size());
 
-			System.out.println("Foxes: " + board.getFoxPositions().size());
+			// System.out.println("Foxes: " + board.getFoxPositions().size());
 
 			// Get the fox Successors
 			getFoxSuccessors(successors, new Board(board), null,
@@ -103,6 +105,8 @@ public class FoxGameEngine implements AiGameEngine {
 					foxesThatHaveMoves, null, true);
 
 			// System.out.println("Successors after: " + successors.size());
+
+			ArrayList<Position> toRemove = new ArrayList<Position>();
 
 			// Iterate through boards foxPositions
 			for (Position tmpPosition : board.getFoxPositions()) {
@@ -119,12 +123,18 @@ public class FoxGameEngine implements AiGameEngine {
 					}
 				}
 
-				// If tmpPosition can't move, remove it from the board
+				// If tmpPosition can't move, set it to be removed from the
+				// board
 				if (!canMove) {
 
-					// Remove tmpPosition from board
-					board.removeFox(tmpPosition);
+					// Add tmpPosition to toRemove
+					toRemove.add(tmpPosition);
 				}
+			}
+
+			// Remove the fox(es) in toRemove from board
+			for (Position tmpPosition : toRemove) {
+				board.removeFox(tmpPosition);
 			}
 
 			// Remove elements in successors if they are the same as an previous
@@ -159,15 +169,7 @@ public class FoxGameEngine implements AiGameEngine {
 		// bestSuccessor.getSheepPositions().size());
 
 		// Gets the move to create bestSuccessor
-		// Move move = Move.move(bestSuccessor.getChangedPositions());
-
-		if (bestSuccessor == null) {
-			System.out.println("Null");
-		}
-
-		ArrayList<Position> positions = bestSuccessor.getChangedPositions();
-		Move move;
-		move = Move.move(positions);
+		Move move = Move.move(bestSuccessor.getChangedPositions());
 
 		// System.out.println("Move sent: " + move.toString());
 
