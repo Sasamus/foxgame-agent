@@ -134,6 +134,8 @@ public class Board {
 		// Killer moves heuristic
 		// Transposition table
 		// Quiescence
+		
+		// Foxes try to be higher up?
 				
 		// Adapt the weight of foxes and sheep to the current presence of both
 		// The single fox left is weighed more and so on.

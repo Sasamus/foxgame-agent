@@ -23,6 +23,8 @@ public class FoxGameEngine implements AiGameEngine {
 
 	// TODO: Think while waiting for opponents move, possibly by using saved
 	// successors
+	
+	// TODO: Remove unnecessary comments
 
 	// TODO: Possibly separate this into more classes
 	
@@ -117,7 +119,7 @@ public class FoxGameEngine implements AiGameEngine {
 				// them
 				// set canMove to true
 				for (Board tmpBoard : successors) {
-					if (tmpBoard.getChangedPositions().contains(tmpPosition)) {
+					if (!tmpBoard.getFoxPositions().contains(tmpPosition)) {
 						canMove = true;
 					}
 				}
