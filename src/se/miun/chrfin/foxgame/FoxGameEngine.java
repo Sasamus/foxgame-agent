@@ -42,7 +42,7 @@ public class FoxGameEngine implements AiGameEngine {
 	// TODO: Make sure Successors are generated properly --
 	// and that all that can be are
 
-	// TODO: Fox may exede it's timeslice, almost certain that it's when the --
+	// TODO: Fox may exceed it's timeslice, almost certain that it's when the --
 	// only moves it can make cause a deadlock
 
 	// TODO: Better player name?
@@ -90,59 +90,53 @@ public class FoxGameEngine implements AiGameEngine {
 
 		// Holds the best Successor
 		Board bestSuccessor;
+		
+		// Get the fox Successors
+		getFoxSuccessors(successors, new Board(board), null, null, false);
+		getFoxSuccessors(successors, new Board(board), null, null, true);
+		
+		// Holds foxes to remove from the board
+		ArrayList<Position> toRemove = new ArrayList<Position>();
+
+		// Iterate through boards foxPositions
+		for (Position tmpPosition : board.getFoxPositions()) {
+
+			// Holds of tmpPosition can move
+			boolean canMove = false;
+
+			// Iterate through successors, if tmpPosition moves in one of
+			// them
+			// set canMove to true
+			for (Board tmpBoard : successors) {
+				if (tmpBoard.getChangedPositions().contains(tmpPosition)) {
+					canMove = true;
+				}
+			}
+
+			// If tmpPosition can't move, set it to be removed from the
+			// board
+			if (!canMove) {
+
+				// Add tmpPosition to toRemove
+				toRemove.add(tmpPosition);
+			}
+		}
+
+		// Remove the fox(es) in toRemove from board
+		for (Position tmpPosition : toRemove) {
+			board.removeFox(tmpPosition);
+		}
 
 		// Acts depending on if status.playerRole equals FOX or SHEEP
 		if (status.playerRole.equals("FOX")) {
-
-			// System.out.println("Successors before: " + successors.size());
-
-			// System.out.println("Foxes: " + board.getFoxPositions().size());
-
-			// Get the fox Successors
-			getFoxSuccessors(successors, new Board(board), null, null, false);
-
-			// System.out.println("Successors middle: " + successors.size());
-
-			getFoxSuccessors(successors, new Board(board), null, null, true);
-
-			// System.out.println("Successors after: " + successors.size());
-
-			// Holds foxes to remove from the board
-			ArrayList<Position> toRemove = new ArrayList<Position>();
-
-			// Iterate through boards foxPositions
-			for (Position tmpPosition : board.getFoxPositions()) {
-
-				// Holds of tmpPosition can move
-				boolean canMove = false;
-
-				// Iterate through successors, if tmpPosition moves in one of
-				// them
-				// set canMove to true
-				for (Board tmpBoard : successors) {
-					if (tmpBoard.getChangedPositions().contains(tmpPosition)) {
-						canMove = true;
-					}
-				}
-
-				// If tmpPosition can't move, set it to be removed from the
-				// board
-				if (!canMove) {
-
-					// Add tmpPosition to toRemove
-					toRemove.add(tmpPosition);
-				}
-			}
-
-			// Remove the fox(es) in toRemove from board
-			for (Position tmpPosition : toRemove) {
-				board.removeFox(tmpPosition);
-			}
 
 			// Get the best successor
 			bestSuccessor = getBestSuccessor(successors, true);
 
 		} else {
+			
+			// Clear successors
+			successors.clear();
 
 			// Get the sheep Successors
 			getSheepSuccessors(successors, new Board(board));
