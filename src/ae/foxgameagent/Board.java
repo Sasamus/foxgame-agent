@@ -182,11 +182,11 @@ public class Board {
 		// Iterate through foxPositions
 		for (Position position : getFoxPositions()) {
 			
-			value -= Math.abs(foxProximityX - position.getX()) * 30;
-			value -= Math.abs(foxProximityY - position.getY()) * 30;
+			value -= Math.abs(foxProximityX - position.getX()) * 1;
+			value -= Math.abs(foxProximityY - position.getY()) * 1;
+		
+		
 		}
-		
-		
 		
 		
 

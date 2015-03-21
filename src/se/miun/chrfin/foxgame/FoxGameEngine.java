@@ -23,11 +23,11 @@ public class FoxGameEngine implements AiGameEngine {
 
 	// TODO: Think while waiting for opponents move, possibly by using saved
 	// successors
-	
+
 	// TODO: Remove unnecessary comments
 
 	// TODO: Possibly separate this into more classes
-	
+
 	// TODO: Compilation performance flags
 
 	// TODO: General clean up of code, it's rather messy
@@ -36,13 +36,14 @@ public class FoxGameEngine implements AiGameEngine {
 	// not handled. Shouldn't cause errors but --
 	// moving to that fox's position wouldn't be considered
 	// Are we notified of removed foxes (and sheep), in getMove or uptadeState?
-	
+
 	// TODO: Check for unnecessary newing of objects
 
 	// TODO: Make sure Successors are generated properly --
 	// and that all that can be are
-	
-	// TODO: A fox may not be removed when it should be
+
+	// TODO: Fox may exede it's timeslice, almost certain that it's when the --
+	// only moves it can make cause a deadlock
 
 	// TODO: Better player name?
 	/**
@@ -119,7 +120,7 @@ public class FoxGameEngine implements AiGameEngine {
 				// them
 				// set canMove to true
 				for (Board tmpBoard : successors) {
-					if (!tmpBoard.getFoxPositions().contains(tmpPosition)) {
+					if (tmpBoard.getChangedPositions().contains(tmpPosition)) {
 						canMove = true;
 					}
 				}
@@ -150,13 +151,8 @@ public class FoxGameEngine implements AiGameEngine {
 			bestSuccessor = getBestSuccessor(successors, false);
 		}
 
-		// System.out.println("Sheep: " +
-		// bestSuccessor.getSheepPositions().size());
-
 		// Gets the move to create bestSuccessor
 		Move move = Move.move(bestSuccessor.getChangedPositions());
-
-		// System.out.println("Move sent: " + move.toString());
 
 		// Return the string version of move
 		return move.toString();
@@ -246,7 +242,7 @@ public class FoxGameEngine implements AiGameEngine {
 	 * @return The utility value of the best Successor
 	 */
 	double minMax(Board node, int depth, double alpha, double beta, boolean max) {
-		
+
 		// Check if nodes state is terminal or at max depth
 		if (node.isTerminal() == 1 || node.isTerminal() == 2 || depth == 0
 				|| (finnishBy - System.currentTimeMillis()) < 200) {
@@ -532,11 +528,11 @@ public class FoxGameEngine implements AiGameEngine {
 				}
 			}
 
+			// Holds a temporary version of successor
+			Board tmpSuccessor;
+
 			// Act depending on if jumping or not
 			if (!jump) {
-
-				// Holds a temporary version of successor
-				Board tmpSuccessor;
 
 				// Iterate through newPositions
 				for (Position newPosition : newPositions) {
@@ -558,9 +554,6 @@ public class FoxGameEngine implements AiGameEngine {
 			} else {
 
 				// System.out.println("Positions: " + newPositions.size());
-
-				// Holds a temporary Successor
-				Board tmpSuccessor;
 
 				// Iterate through newPositions
 				for (Position newPosition : newPositions) {
