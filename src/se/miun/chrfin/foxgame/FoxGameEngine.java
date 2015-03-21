@@ -32,11 +32,6 @@ public class FoxGameEngine implements AiGameEngine {
 
 	// TODO: General clean up of code, it's rather messy
 
-	// TODO: Playing sheep and a fox is removed --
-	// not handled. Shouldn't cause errors but --
-	// moving to that fox's position wouldn't be considered
-	// Are we notified of removed foxes (and sheep), in getMove or uptadeState?
-
 	// TODO: Check for unnecessary newing of objects
 
 	// TODO: Make sure Successors are generated properly --
