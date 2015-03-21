@@ -115,23 +115,78 @@ public class Board {
 	 * @return The utility value
 	 */
 	public double getUtility() {
-
-		// TODO: Makes this better, currently rather shit.
-
-		// TODO: Account for the foxes positions, proximity to 4,3 perhaps.
-
+		
 		// Holds the utility value
-		double value = 0;
+				double value = 0;
+		
+		
+//		// Iterate through sheepPositions
+//		for (Position position : getSheepPositions()) {
+//
+//			// Add positions distance from the top to value
+//			value = value + position.y;
+//		}
+//
+//		// Divide value by the nr of sheep
+//		value = value / getSheepPositions().size();
 
+		
+		// Killer moves heuristic
+		// Transposition table
+		// Quiescence
+				
+		// Adapt the weight of foxes and sheep to the current presence of both
+		// The single fox left is weighed more and so on.
+				
+		// Remember the "weight" of features can and should be tweaked
+		
+		// Features:
+		// h(s) = total distance from top for each sheep
+		// f(s) = nr of foxes
+		// s(s) = nr of sheep
+		// rs(s) = removed sheep * 40
+		// rf(s) = removed foxes * 400
+		// fp(s) = foxes total proximity to 4,4 * 100
+		// sp(s) = sheep total proximity to 4,1 * 10
+		
+		// Current = h(s)/s(s)
+		
+		// Better?
+		// (sp(s) + rs(s) - rf(s)) - fp(s)
+				
+		int foxProximityX = 4;
+		int foxProximityY = 4;
+		
+		int sheepProximityX = 4;
+		int sheepProximityY = 1;
+		
+		
+		// Add sp(s) to to value
 		// Iterate through sheepPositions
 		for (Position position : getSheepPositions()) {
 
-			// Add positions distance from the top to value
-			value = value + position.y;
+			value += Math.abs(sheepProximityX - position.getX()) * 10;
+			value += Math.abs(sheepProximityY - position.getY()) * 10;
 		}
+		
 
-		// Divide value by the nr of sheep
-		value = value / getSheepPositions().size();
+		// Add rs(s) to to value
+		value +=  (20 - getSheepPositions().size()) * 40; 
+		
+		// Subtract rf(s) to to value
+		value -=  (2 - getFoxPositions().size()) * 400; 
+		
+		// Subtract fp(s) to to value
+		// Iterate through foxPositions
+		for (Position position : getFoxPositions()) {
+			
+			value -= Math.abs(foxProximityX - position.getX()) * 10;
+			value -= Math.abs(foxProximityY - position.getY()) * 10;
+		}
+		
+		
+		
+		
 
 		// Return value
 		return value;

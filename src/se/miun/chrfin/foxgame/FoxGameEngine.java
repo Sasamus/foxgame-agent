@@ -24,30 +24,15 @@ public class FoxGameEngine implements AiGameEngine {
 	// TODO: Think while waiting for opponents move, possibly by using saved
 	// successors
 
-	// TODO: Foxes sometimes try to do a normal move --
-	// to a space that is occupied by a sheep
-	// may have been indirectly fixed.
-
 	// TODO: Possibly separate this into more classes
 
 	// TODO: General clean up of code, it's rather messy
-
-	// TODO: minimax depth limit, bigger if time
-
-	// TODO: Account for time
 
 	// TODO: Playing sheep and a fox is removed --
 	// not handled. Shouldn't cause errors but --
 	// moving to that fox's position wouldn't be considered
 	// Are we notified of removed foxes (and sheep), in getMove or uptadeState?
-
-	// TODO: Fox seem to to jump onto the other fox, --
-	// even if there are no sheep to jump over
-	// may have been indirectly fixed.
-
-	// TODO: Fox can cause deadlock, sheep may as well, haven't tested --
-	// may have been indirectly fixed.
-
+	
 	// TODO: Check for unnecessary newing of objects
 
 	// TODO: Make sure Successors are generated properly --
