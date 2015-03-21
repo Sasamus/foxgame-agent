@@ -117,7 +117,7 @@ public class Board {
 	public double getUtility() {
 		
 		// Holds the utility value
-				double value = 0;
+		double value = 0;
 		
 		
 //		// Iterate through sheepPositions
@@ -155,7 +155,7 @@ public class Board {
 		// (sp(s) + rs(s) - rf(s)) - fp(s)
 				
 		int foxProximityX = 4;
-		int foxProximityY = 4;
+		int foxProximityY = 3;
 		
 		int sheepProximityX = 4;
 		int sheepProximityY = 1;
@@ -165,23 +165,23 @@ public class Board {
 		// Iterate through sheepPositions
 		for (Position position : getSheepPositions()) {
 
-			value += Math.abs(sheepProximityX - position.getX()) * 10;
-			value += Math.abs(sheepProximityY - position.getY()) * 10;
+			value += Math.abs(sheepProximityX - position.getX()) * 100;
+			value += Math.abs(sheepProximityY - position.getY()) * 100;
 		}
 		
 
 		// Add rs(s) to to value
-		value +=  (20 - getSheepPositions().size()) * 40; 
+		value +=  (20 - getSheepPositions().size()) * 60; 
 		
 		// Subtract rf(s) to to value
-		value -=  (2 - getFoxPositions().size()) * 400; 
+		value -=  (2 - getFoxPositions().size()) * 600; 
 		
 		// Subtract fp(s) to to value
 		// Iterate through foxPositions
 		for (Position position : getFoxPositions()) {
 			
-			value -= Math.abs(foxProximityX - position.getX()) * 10;
-			value -= Math.abs(foxProximityY - position.getY()) * 10;
+			value -= Math.abs(foxProximityX - position.getX()) * 30;
+			value -= Math.abs(foxProximityY - position.getY()) * 30;
 		}
 		
 		

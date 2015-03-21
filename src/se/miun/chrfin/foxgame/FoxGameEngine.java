@@ -25,6 +25,8 @@ public class FoxGameEngine implements AiGameEngine {
 	// successors
 
 	// TODO: Possibly separate this into more classes
+	
+	// TODO: Compilation performance flags
 
 	// TODO: General clean up of code, it's rather messy
 
@@ -37,6 +39,8 @@ public class FoxGameEngine implements AiGameEngine {
 
 	// TODO: Make sure Successors are generated properly --
 	// and that all that can be are
+	
+	// TODO: A fox may not be removed when it should be
 
 	// TODO: Better player name?
 	/**
@@ -172,7 +176,7 @@ public class FoxGameEngine implements AiGameEngine {
 		Board bestSuccessor = null;
 
 		// Holds the depth to search to
-		int depth = 5;
+		int depth = 10;
 
 		if (fox) {
 
@@ -240,10 +244,10 @@ public class FoxGameEngine implements AiGameEngine {
 	 * @return The utility value of the best Successor
 	 */
 	double minMax(Board node, int depth, double alpha, double beta, boolean max) {
-
+		
 		// Check if nodes state is terminal or at max depth
 		if (node.isTerminal() == 1 || node.isTerminal() == 2 || depth == 0
-				|| (finnishBy - System.currentTimeMillis()) < 10) {
+				|| (finnishBy - System.currentTimeMillis()) < 200) {
 
 			// System.out.println("Utility: " + node.getUtility());
 
