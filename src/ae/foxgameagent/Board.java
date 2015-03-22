@@ -140,9 +140,7 @@ public class Board {
 		// sp(s) = sheep total proximity to 4,1 * 10
 		// ss(s) = total "safety" of the sheep, Positions with few or no ways to
 		// jump over it
-
-		// Current:
-		// (sp(s) + rs(s) - rf(s)) - fp(s)
+		// t(s) = is it terminal
 
 		int foxProximityX = 4;
 		int foxProximityY = 3;
@@ -228,6 +226,13 @@ public class Board {
 
 			value -= Math.abs(foxProximityX - position.getX()) * 10;
 			value -= Math.abs(foxProximityY - position.getY()) * 20;
+		}
+
+		// Add or subtract t(s) from value depending on who won
+		if (isTerminal() == 1) {
+			value -= 1000;
+		} else if (isTerminal() == 2) {
+			value += 1000;
 		}
 
 		// Return value
