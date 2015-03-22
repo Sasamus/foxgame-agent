@@ -119,18 +119,6 @@ public class Board {
 		// Holds the utility value
 		double value = 0;
 		
-		
-//		// Iterate through sheepPositions
-//		for (Position position : getSheepPositions()) {
-//
-//			// Add positions distance from the top to value
-//			value = value + position.y;
-//		}
-//
-//		// Divide value by the nr of sheep
-//		value = value / getSheepPositions().size();
-
-		
 		// Killer moves heuristic
 		// Transposition table
 		// Quiescence
@@ -151,9 +139,7 @@ public class Board {
 		// fp(s) = foxes total proximity to 4,4 * 100
 		// sp(s) = sheep total proximity to 4,1 * 10
 		
-		// Current = h(s)/s(s)
-		
-		// Better?
+		// Current:
 		// (sp(s) + rs(s) - rf(s)) - fp(s)
 				
 		int foxProximityX = 4;
@@ -162,34 +148,28 @@ public class Board {
 		int sheepProximityX = 4;
 		int sheepProximityY = 1;
 		
-		
 		// Add sp(s) to to value
 		// Iterate through sheepPositions
 		for (Position position : getSheepPositions()) {
 
-			value += Math.abs(sheepProximityX - position.getX()) * 100;
+//			value += Math.abs(sheepProximityX - position.getX()) * 100;
 			value += Math.abs(sheepProximityY - position.getY()) * 100;
 		}
 		
-
 		// Add rs(s) to to value
-		value +=  (20 - getSheepPositions().size()) * 60; 
+		value +=  (20 - getSheepPositions().size()) * 500; 
 		
 		// Subtract rf(s) to to value
-		value -=  (2 - getFoxPositions().size()) * 600; 
+		value -=  (2 - getFoxPositions().size()) * 7000; 
 		
 		// Subtract fp(s) to to value
 		// Iterate through foxPositions
 		for (Position position : getFoxPositions()) {
 			
-			value -= Math.abs(foxProximityX - position.getX()) * 1;
-			value -= Math.abs(foxProximityY - position.getY()) * 1;
-		
-		
+			value -= Math.abs(foxProximityX - position.getX()) * 20;
+			value -= Math.abs(foxProximityY - position.getY()) * 20;
 		}
 		
-		
-
 		// Return value
 		return value;
 	}
