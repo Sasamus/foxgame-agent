@@ -10,35 +10,14 @@ import ae.foxgameagent.Board;
 
 /**
  * @author Christoffer Fink
+ * @author Albin Engström
  */
 public class FoxGameEngine implements AiGameEngine {
-
-	// TODO: See if there are faster variables/collections to use.
-
-	// TODO: Look for ways to speed things up
-
-	// TODO: Generate successors once --
-	// possibly in the constructor, and store
-	// them instead of making new ones every time.
-
-	// TODO: Think while waiting for opponents move, possibly by using saved
-	// successors
-
-	// TODO: Remove unnecessary comments
-
-	// TODO: Possibly separate this into more classes
-
-	// TODO: Compilation performance flags
-
-	// TODO: General clean up of code, it's rather messy
-
-	// TODO: Check for unnecessary newing of objects
-
-	// TODO: Make sure Successors are generated properly --
-	// and that all that can be are
-
-	// TODO: Fox may exceed it's timeslice, almost certain that it's when the --
-	// only moves it can make cause a deadlock
+	
+	// Note: The agent may exceed it's timeslice if the only move(s)
+	// it can make cause a deadlock, it could make the move
+	// and be disqualified that way, but it chooses not to to
+	// make the statement that it's not a mistake.
 
 	// TODO: Better player name?
 	/**
@@ -239,8 +218,6 @@ public class FoxGameEngine implements AiGameEngine {
 		if (node.isTerminal() == 1 || node.isTerminal() == 2 || depth == 0
 				|| (finnishBy - System.currentTimeMillis()) < 200) {
 
-			// System.out.println("Utility: " + node.getUtility());
-
 			// If so, return it's utility
 			return node.getUtility();
 		}
@@ -392,8 +369,7 @@ public class FoxGameEngine implements AiGameEngine {
 				tmpSuccessor = new Board(successor);
 
 				// Make the move
-				tmpSuccessor.changePostition(new Position(sheepPosition),
-						new Position(newPosition), false);
+				tmpSuccessor.changePostition(sheepPosition, newPosition, false);
 
 				// Add successor to successors, if it doesn't cause a deadlock
 				if (!previousStates.contains(tmpSuccessor)) {
@@ -442,7 +418,7 @@ public class FoxGameEngine implements AiGameEngine {
 		// Acts depending on if jumps have happened
 		if (alreadyJumpedBoard == null) {
 			// Set successor to node
-			successor = new Board(node);
+			successor = node;
 
 			// Clear changedPositions
 			successor.clearChangedPositions();
@@ -454,7 +430,7 @@ public class FoxGameEngine implements AiGameEngine {
 			successor = alreadyJumpedBoard;
 
 			// Set foxesToJump to foxToJump
-			foxesToMove.add(foxToJump);
+			foxesToMove.add(new Position(foxToJump));
 		}
 
 		// Iterate through foxPositions
@@ -466,7 +442,7 @@ public class FoxGameEngine implements AiGameEngine {
 			// Acts depending on if jumps have happened
 			if (alreadyJumpedBoard == null) {
 				// Set successor to node
-				successor = new Board(node);
+				successor = node;
 
 				// Clear changedPositions
 				successor.clearChangedPositions();
@@ -533,8 +509,7 @@ public class FoxGameEngine implements AiGameEngine {
 					tmpSuccessor = new Board(successor);
 
 					// Apply the move
-					tmpSuccessor.changePostition(new Position(foxPosition),
-							new Position(newPosition), false);
+					tmpSuccessor.changePostition(foxPosition, newPosition, false);
 
 					// Add tmpSuccessor to successors, if it doesn't cause a
 					// deadlock
@@ -553,18 +528,9 @@ public class FoxGameEngine implements AiGameEngine {
 					// Set tmpSuccessor to match successor
 					tmpSuccessor = new Board(successor);
 
-					// System.out.println("The new position: " + newPosition.x
-					// + ":" + newPosition.y);
-					//
-					// System.out.println("Before: "
-					// + tmpSuccessor.getSheepPositions().size());
-
 					// Apply the move
 					tmpSuccessor.changePostition(new Position(foxPosition),
 							new Position(newPosition), true);
-
-					// System.out.println("After: "
-					// + tmpSuccessor.getSheepPositions().size());
 
 					// Add tmpSuccessor to successors, if it doesn't cause a
 					// deadlock
@@ -688,24 +654,6 @@ public class FoxGameEngine implements AiGameEngine {
 		if (board.isPositionValid(x + xOffset, y + yOffset)
 				&& (theBoard.isOccupied(new Position(x + xOffset, y + yOffset)) == 0)) {
 			if (step == 2) {
-
-				// System.out.println("isOccupied Org: " + x + ":" + y + ":"
-				// + isOccupied(theBoard, new Position(x, y)));
-				// System.out.println("isOccupied Middle: "
-				// + (x + (xOffset / 2))
-				// + ":"
-				// + (y + (yOffset / 2))
-				// + ":"
-				// + isOccupied(theBoard, new Position(x + (xOffset / 2),
-				// y + (yOffset / 2))));
-				// System.out.println("isOccupied New: "
-				// + (x + xOffset)
-				// + ":"
-				// + (y + yOffset)
-				// + ":"
-				// + isOccupied(theBoard, new Position(x + xOffset, y
-				// + yOffset)));
-
 				if (theBoard.isOccupied(new Position(x + (xOffset / 2), y
 						+ (yOffset / 2))) == 1) {
 					newPositions.add(new Position(x + xOffset, y + yOffset));

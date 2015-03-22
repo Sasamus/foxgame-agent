@@ -126,10 +126,10 @@ public class Board {
 		// h(s) = total distance from top for each sheep
 		// f(s) = nr of foxes
 		// s(s) = nr of sheep
-		// rs(s) = removed sheep * 40
-		// rf(s) = removed foxes * 400
-		// fp(s) = foxes total proximity to 4,4 * 100
-		// sp(s) = sheep total proximity to 4,1 * 10
+		// rs(s) = removed sheep
+		// rf(s) = removed foxes 
+		// fp(s) = foxes total proximity to a position
+		// sp(s) = sheep total proximity to a position
 		// ss(s) = total "safety" of the sheep, Positions with few or no ways to
 		// jump over it
 		// t(s) = is it terminal
@@ -137,14 +137,11 @@ public class Board {
 		int foxProximityX = 4;
 		int foxProximityY = 3;
 
-		int sheepProximityX = 4;
 		int sheepProximityY = 1;
 
 		// Add sp(s) to to value
 		// Iterate through sheepPositions
 		for (Position position : getSheepPositions()) {
-
-			// value += Math.abs(sheepProximityX - position.getX()) * 50;
 			value += Math.abs(sheepProximityY - position.getY()) * 100;
 		}
 
@@ -207,7 +204,7 @@ public class Board {
 		}
 
 		// Add rs(s) to to value
-		value += (Math.pow(2, (20 - getSheepPositions().size())) + 1000);
+		value += (20 - getSheepPositions().size()) * 500;
 
 		// Subtract rf(s) to to value
 		value -= Math.pow(5000, (2 - getFoxPositions().size()));
