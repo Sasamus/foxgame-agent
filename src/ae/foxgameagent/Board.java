@@ -115,21 +115,21 @@ public class Board {
 	 * @return The utility value
 	 */
 	public double getUtility() {
-		
+
 		// Holds the utility value
 		double value = 0;
-		
+
 		// Killer moves heuristic
 		// Transposition table
 		// Quiescence
-		
+
 		// Foxes try to be higher up?
-				
+
 		// Adapt the weight of foxes and sheep to the current presence of both
 		// The single fox left is weighed more and so on.
-				
+
 		// Remember the "weight" of features can and should be tweaked
-		
+
 		// Features:
 		// h(s) = total distance from top for each sheep
 		// f(s) = nr of foxes
@@ -138,38 +138,98 @@ public class Board {
 		// rf(s) = removed foxes * 400
 		// fp(s) = foxes total proximity to 4,4 * 100
 		// sp(s) = sheep total proximity to 4,1 * 10
-		
+		// ss(s) = total "safety" of the sheep, Positions with few or no ways to
+		// jump over it
+
 		// Current:
 		// (sp(s) + rs(s) - rf(s)) - fp(s)
-				
+
 		int foxProximityX = 4;
 		int foxProximityY = 3;
-		
+
 		int sheepProximityX = 4;
 		int sheepProximityY = 1;
-		
+
 		// Add sp(s) to to value
 		// Iterate through sheepPositions
 		for (Position position : getSheepPositions()) {
 
-//			value += Math.abs(sheepProximityX - position.getX()) * 50;
+			// value += Math.abs(sheepProximityX - position.getX()) * 50;
 			value += Math.abs(sheepProximityY - position.getY()) * 100;
 		}
-		
+
+		// Subtract ss(s) fro, value
+		ArrayList<Position> adjacentPositions = new ArrayList<Position>();
+
+		// Iterate through sheepPositions
+		for (Position position : getSheepPositions()) {
+
+			// Clear adjecentPositions
+			adjacentPositions.clear();
+
+			// Add all adjacent Positions to adjecentPositions,
+			// the Positions opposite to each other are added together
+			adjacentPositions.add(new Position(position.getX() + 1, position
+					.getY()));
+			adjacentPositions.add(new Position(position.getX() - 1, position
+					.getY()));
+
+			adjacentPositions.add(new Position(position.getX(),
+					position.getY() + 1));
+			adjacentPositions.add(new Position(position.getX(),
+					position.getY() - 1));
+
+			adjacentPositions.add(new Position(position.getX() + 1, position
+					.getY() + 1));
+			adjacentPositions.add(new Position(position.getX() - 1, position
+					.getY() - 1));
+
+			adjacentPositions.add(new Position(position.getX() + 1, position
+					.getY() - 1));
+			adjacentPositions.add(new Position(position.getX() - 1, position
+					.getY() + 1));
+
+			// The value of one safe attack angle
+			int valueOfBeingSafe = 20;
+
+			// Iterate through adjacentPositions
+			for (int i = 0; i < adjacentPositions.size(); i = i + 2) {
+
+				// If both Positions are on the board
+				if (isPositionValid(adjacentPositions.get(i).getX(),
+						adjacentPositions.get(i).getY())
+						&& isPositionValid(adjacentPositions.get(i + 1).getX(),
+								adjacentPositions.get(i + 1).getY())) {
+
+					// If one of the positions are occupied by a sheep,
+					// angle is safe
+					if (isOccupied(adjacentPositions.get(i)) == 1
+							|| isOccupied(adjacentPositions.get(i)) == 1) {
+						value -= valueOfBeingSafe;
+					}
+
+				} else {
+
+					// Both positions are not on the board, angle is safe
+					value -= valueOfBeingSafe;
+				}
+			}
+		}
+
 		// Add rs(s) to to value
-		value +=  (20 - getSheepPositions().size()) * 500; 
-		
+		value += (20 - getSheepPositions().size()) * 500;
+
 		// Subtract rf(s) to to value
-		value -=  (2 - getFoxPositions().size()) * 7000; 
-		
+		value -= (2 - getFoxPositions().size()) * 7000;
+
 		// Subtract fp(s) to to value
 		// Iterate through foxPositions
 		for (Position position : getFoxPositions()) {
-			
+
 			value -= Math.abs(foxProximityX - position.getX()) * 10;
 			value -= Math.abs(foxProximityY - position.getY()) * 20;
 		}
-		
+
 		// Return value
 		return value;
 	}
