@@ -152,7 +152,7 @@ public class Board {
 		// Iterate through sheepPositions
 		for (Position position : getSheepPositions()) {
 
-//			value += Math.abs(sheepProximityX - position.getX()) * 100;
+//			value += Math.abs(sheepProximityX - position.getX()) * 50;
 			value += Math.abs(sheepProximityY - position.getY()) * 100;
 		}
 		
@@ -166,7 +166,7 @@ public class Board {
 		// Iterate through foxPositions
 		for (Position position : getFoxPositions()) {
 			
-			value -= Math.abs(foxProximityX - position.getX()) * 20;
+			value -= Math.abs(foxProximityX - position.getX()) * 10;
 			value -= Math.abs(foxProximityY - position.getY()) * 20;
 		}
 		
@@ -277,8 +277,6 @@ public class Board {
 
 						// Removes the sheep at that Position
 						sheepPositions.remove(new Position(x, y));
-
-						// System.out.println("Sheep removed: " + x + "," + y);
 
 						// If changedPositions is empty, add both new and old
 						// Positions

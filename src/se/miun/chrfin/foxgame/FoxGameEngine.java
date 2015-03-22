@@ -85,16 +85,17 @@ public class FoxGameEngine implements AiGameEngine {
 
 		// Holds the best Successor
 		Board bestSuccessor;
-		
+
 		// Get the fox Successors
 		getFoxSuccessors(successors, new Board(board), null, null, false);
 		getFoxSuccessors(successors, new Board(board), null, null, true);
-		
+
 		// Holds foxes to remove from the board
 		ArrayList<Position> toRemove = new ArrayList<Position>();
 
-		// Iterate through boards foxPositions
-		for (Position tmpPosition : board.getFoxPositions()) {
+		// Iterate through the previous states foxPositions
+		for (Position tmpPosition : previousStates.get(
+				previousStates.size() - 1).getFoxPositions()) {
 
 			// Holds of tmpPosition can move
 			boolean canMove = false;
@@ -129,7 +130,7 @@ public class FoxGameEngine implements AiGameEngine {
 			bestSuccessor = getBestSuccessor(successors, true);
 
 		} else {
-			
+
 			// Clear successors
 			successors.clear();
 
