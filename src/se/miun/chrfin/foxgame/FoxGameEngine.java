@@ -94,30 +94,32 @@ public class FoxGameEngine implements AiGameEngine {
 		ArrayList<Position> toRemove = new ArrayList<Position>();
 
 		// Iterate through the previous states foxPositions
-		for (Position tmpPosition : previousStates.get(
-				previousStates.size() - 1).getFoxPositions()) {
+		if(previousStates.size() > 0){
+			for (Position tmpPosition : previousStates.get(
+					previousStates.size() - 1).getFoxPositions()) {
 
-			// Holds of tmpPosition can move
-			boolean canMove = false;
+				// Holds of tmpPosition can move
+				boolean canMove = false;
 
-			// Iterate through successors, if tmpPosition moves in one of
-			// them
-			// set canMove to true
-			for (Board tmpBoard : successors) {
-				if (tmpBoard.getChangedPositions().contains(tmpPosition)) {
-					canMove = true;
+				// Iterate through successors, if tmpPosition moves in one of
+				// them
+				// set canMove to true
+				for (Board tmpBoard : successors) {
+					if (tmpBoard.getChangedPositions().contains(tmpPosition)) {
+						canMove = true;
+					}
+				}
+
+				// If tmpPosition can't move, set it to be removed from the
+				// board
+				if (!canMove) {
+
+					// Add tmpPosition to toRemove
+					toRemove.add(tmpPosition);
 				}
 			}
-
-			// If tmpPosition can't move, set it to be removed from the
-			// board
-			if (!canMove) {
-
-				// Add tmpPosition to toRemove
-				toRemove.add(tmpPosition);
-			}
 		}
-
+		
 		// Remove the fox(es) in toRemove from board
 		for (Position tmpPosition : toRemove) {
 			board.removeFox(tmpPosition);
