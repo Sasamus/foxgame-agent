@@ -119,16 +119,8 @@ public class Board {
 		// Holds the utility value
 		double value = 0;
 
-		// Killer moves heuristic
-		// Transposition table
-		// Quiescence
-
-		// Foxes try to be higher up?
-
 		// Adapt the weight of foxes and sheep to the current presence of both
 		// The single fox left is weighed more and so on.
-
-		// Remember the "weight" of features can and should be tweaked
 
 		// Features:
 		// h(s) = total distance from top for each sheep
@@ -215,10 +207,10 @@ public class Board {
 		}
 
 		// Add rs(s) to to value
-		value += (20 - getSheepPositions().size()) * 500;
+		value += (Math.pow(2, (20 - getSheepPositions().size())) + 1000);
 
 		// Subtract rf(s) to to value
-		value -= (2 - getFoxPositions().size()) * 7000;
+		value -= Math.pow(5000, (2 - getFoxPositions().size()));
 
 		// Subtract fp(s) to to value
 		// Iterate through foxPositions
