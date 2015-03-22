@@ -116,23 +116,21 @@ public class Board {
 	 */
 	public double getUtility() {
 
-		// Holds the utility value
-		double value = 0;
-
-		// Adapt the weight of foxes and sheep to the current presence of both
-		// The single fox left is weighed more and so on.
-
 		// Features:
 		// h(s) = total distance from top for each sheep
 		// f(s) = nr of foxes
 		// s(s) = nr of sheep
 		// rs(s) = removed sheep
-		// rf(s) = removed foxes 
+		// rf(s) = removed foxes
 		// fp(s) = foxes total proximity to a position
 		// sp(s) = sheep total proximity to a position
 		// ss(s) = total "safety" of the sheep, Positions with few or no ways to
 		// jump over it
 		// t(s) = is it terminal
+		// sPen(s) = sheep in pen
+
+		// Holds the utility value
+		double value = 0;
 
 		int foxProximityX = 4;
 		int foxProximityY = 3;
@@ -143,10 +141,10 @@ public class Board {
 		// Add sp(s) to to value
 		// Iterate through sheepPositions
 		for (Position position : getSheepPositions()) {
-			if(Math.abs(sheepProximityX - position.getX()) > 2){
+			if (Math.abs(sheepProximityX - position.getX()) > 2) {
 				value += Math.abs(sheepProximityX - position.getX());
 			}
-			value += Math.abs(sheepProximityY - position.getY()) * 1.1;
+			value += Math.pow(1.1, Math.abs(sheepProximityY - position.getY()));
 		}
 
 		// Subtract ss(s) from value
@@ -181,7 +179,7 @@ public class Board {
 					.getY() + 1));
 
 			// The value of one safe attack angle
-			double valueOfBeingSafe = 0.24;
+			double valueOfBeingSafe = 0.01;
 
 			// Iterate through adjacentPositions
 			for (int i = 0; i < adjacentPositions.size(); i = i + 2) {
@@ -208,20 +206,31 @@ public class Board {
 		}
 
 		// Add rs(s) to to value
-		value += (20 - getSheepPositions().size()) * 5;
+		value += (20 - getSheepPositions().size()) * 3;
 
 		// Subtract rf(s) to to value
-		value -= (2 - getFoxPositions().size()) * 50;
+		value -= (2 - getFoxPositions().size()) * 30;
 
 		// Subtract fp(s) to to value
 		// Iterate through foxPositions
 		for (Position position : getFoxPositions()) {
 
-			if(Math.abs(foxProximityX - position.getX()) > 2){
+			if (Math.abs(foxProximityX - position.getX()) > 2) {
 				value -= Math.abs(foxProximityX - position.getX()) * 1.1;
 			}
-			
+
 			value -= Math.abs(foxProximityY - position.getY());
+		}
+
+		// Subtract sPen(s) from value
+		for (Position position : getSheepPositions()) {
+			if (position.getY() == 1) {
+				value -= 2;
+			} else if (position.getY() == 2) {
+				value -= 1.5;
+			} else if (position.getY() == 2) {
+				value -= 1;
+			}
 		}
 
 		// Add or subtract t(s) from value depending on who won
