@@ -137,15 +137,19 @@ public class Board {
 		int foxProximityX = 4;
 		int foxProximityY = 3;
 
+		int sheepProximityX = 4;
 		int sheepProximityY = 1;
 
 		// Add sp(s) to to value
 		// Iterate through sheepPositions
 		for (Position position : getSheepPositions()) {
-			value += Math.abs(sheepProximityY - position.getY()) * 100;
+			if(Math.abs(sheepProximityX - position.getX()) > 2){
+				value += Math.abs(sheepProximityX - position.getX());
+			}
+			value += Math.abs(sheepProximityY - position.getY()) * 1.1;
 		}
 
-		// Subtract ss(s) fro, value
+		// Subtract ss(s) from value
 		ArrayList<Position> adjacentPositions = new ArrayList<Position>();
 
 		// Iterate through sheepPositions
@@ -177,7 +181,7 @@ public class Board {
 					.getY() + 1));
 
 			// The value of one safe attack angle
-			int valueOfBeingSafe = 20;
+			double valueOfBeingSafe = 0.24;
 
 			// Iterate through adjacentPositions
 			for (int i = 0; i < adjacentPositions.size(); i = i + 2) {
@@ -204,17 +208,20 @@ public class Board {
 		}
 
 		// Add rs(s) to to value
-		value += (20 - getSheepPositions().size()) * 500;
+		value += (20 - getSheepPositions().size()) * 5;
 
 		// Subtract rf(s) to to value
-		value -= Math.pow(5000, (2 - getFoxPositions().size()));
+		value -= (2 - getFoxPositions().size()) * 50;
 
 		// Subtract fp(s) to to value
 		// Iterate through foxPositions
 		for (Position position : getFoxPositions()) {
 
-			value -= Math.abs(foxProximityX - position.getX()) * 10;
-			value -= Math.abs(foxProximityY - position.getY()) * 20;
+			if(Math.abs(foxProximityX - position.getX()) > 2){
+				value -= Math.abs(foxProximityX - position.getX()) * 1.1;
+			}
+			
+			value -= Math.abs(foxProximityY - position.getY());
 		}
 
 		// Add or subtract t(s) from value depending on who won

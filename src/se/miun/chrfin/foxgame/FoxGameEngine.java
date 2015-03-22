@@ -13,7 +13,7 @@ import ae.foxgameagent.Board;
  * @author Albin Engström
  */
 public class FoxGameEngine implements AiGameEngine {
-	
+
 	// Note: The agent may exceed it's timeslice if the only move(s)
 	// it can make cause a deadlock, it could make the move
 	// and be disqualified that way, but it chooses not to to
@@ -73,7 +73,7 @@ public class FoxGameEngine implements AiGameEngine {
 		ArrayList<Position> toRemove = new ArrayList<Position>();
 
 		// Iterate through the previous states foxPositions
-		if(previousStates.size() > 0){
+		if (previousStates.size() > 0) {
 			for (Position tmpPosition : previousStates.get(
 					previousStates.size() - 1).getFoxPositions()) {
 
@@ -98,7 +98,7 @@ public class FoxGameEngine implements AiGameEngine {
 				}
 			}
 		}
-		
+
 		// Remove the fox(es) in toRemove from board
 		for (Position tmpPosition : toRemove) {
 			board.removeFox(tmpPosition);
@@ -313,7 +313,7 @@ public class FoxGameEngine implements AiGameEngine {
 		for (Position sheepPosition : node.getSheepPositions()) {
 
 			// Set successor to node
-			successor = new Board(node);
+			successor = node;
 
 			// Clear newPositions
 			newPositions.clear();
@@ -369,7 +369,8 @@ public class FoxGameEngine implements AiGameEngine {
 				tmpSuccessor = new Board(successor);
 
 				// Make the move
-				tmpSuccessor.changePostition(sheepPosition, newPosition, false);
+				tmpSuccessor.changePostition(new Position(sheepPosition),
+						new Position(newPosition), false);
 
 				// Add successor to successors, if it doesn't cause a deadlock
 				if (!previousStates.contains(tmpSuccessor)) {
@@ -509,7 +510,8 @@ public class FoxGameEngine implements AiGameEngine {
 					tmpSuccessor = new Board(successor);
 
 					// Apply the move
-					tmpSuccessor.changePostition(foxPosition, newPosition, false);
+					tmpSuccessor.changePostition(new Position(foxPosition),
+							new Position(newPosition), false);
 
 					// Add tmpSuccessor to successors, if it doesn't cause a
 					// deadlock
