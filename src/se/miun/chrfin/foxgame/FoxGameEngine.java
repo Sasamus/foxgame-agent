@@ -16,10 +16,9 @@ public class FoxGameEngine implements AiGameEngine {
 
 	// Note: The agent may exceed it's timeslice if the only move(s)
 	// it can make cause a deadlock, it could make the move
-	// and be disqualified that way, but it chooses not to to
-	// make the statement that it's not a mistake.
+	// and be disqualified that way, but it doesn't to
+	// make the statement that it chooses not to make a mistake.
 
-	// TODO: Better player name?
 	/**
 	 * Holds the player name
 	 */
